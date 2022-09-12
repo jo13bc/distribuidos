@@ -20,7 +20,7 @@ function run(api) {
         app.get(`/${api.service.fileName}/:id/books`, api.books);
     });
     exp.use(bodyParser.json());
-    exp.use(`/.back-end/src/functions/${api.service.fileName}`, app);
+    exp.use(`/.netlify/functions/${api.service.fileName}`, app);
     return exp;
 }
 
