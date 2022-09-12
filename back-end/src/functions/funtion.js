@@ -23,3 +23,5 @@ function run(api) {
     exp.use(`/.back-end/src/functions/${api.service.fileName}`, app);
     return exp;
 }
+
+module.exports = run;

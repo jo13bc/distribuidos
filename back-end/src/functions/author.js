@@ -3,7 +3,7 @@ const serverless = require('serverless-http');
 const Service = require('../service/ServiceFactory');
 const AuthorAPI = require('../api/AuthorAPI');
 
-const api = new AuthorAPI(Service.publisher);
+const api = new AuthorAPI(Service.author);
 
 const exp = run(api);
 
