@@ -1,7 +1,7 @@
 'use strict';
 const serverless = require('serverless-http');
-const Service = require('../service/ServiceFactory');
-const PublisherAPI = require('../api/PublisherAPI');
+const Service = require('../../service/ServiceFactory');
+const PublisherAPI = require('../../api/PublisherAPI');
 
 const api = new PublisherAPI(Service.publisher);
 
