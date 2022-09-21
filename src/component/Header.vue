@@ -5,9 +5,21 @@
             <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
             <b-collapse id="nav-collapse" is-nav>
                 <b-navbar-nav>
-                    <b-nav-item href="/movie">Películas</b-nav-item>
-                    <b-nav-item href="/study">Estudios</b-nav-item>
-                    <b-nav-item href="/director">Directores</b-nav-item>
+                    <b-nav-item>
+                        <router-link class="button button-primary" to="/movie">
+                            Películas
+                        </router-link>
+                    </b-nav-item>
+                    <b-nav-item>
+                        <router-link class="button button-primary" to="/director">
+                            Directores
+                        </router-link>
+                    </b-nav-item>
+                    <b-nav-item>
+                        <router-link class="button button-primary" to="/study">
+                            Estudios
+                        </router-link>
+                    </b-nav-item>
                 </b-navbar-nav>
             </b-collapse>
         </b-navbar>
@@ -15,6 +27,11 @@
 </template>
   
 <script lang="ts">
+import { ENTITY } from '../entity/utils';
 import { defineComponent } from 'vue';
-export default defineComponent({});
+export default defineComponent({
+    data() {
+        return { ENTITY };
+    }
+});
 </script>
