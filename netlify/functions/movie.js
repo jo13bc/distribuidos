@@ -106,6 +106,7 @@ app.post('/:id', (req, res) => {
     if (index != -1)
         res.status(404).send({ code: 404, message: 'La película ya existe' });
     else {
+        req.body.id = movies.length + 1;
         movies.push(req.body);
         res.status(200).send({ code: 200, message: 'La película fue insertada exitosamente' });
     }
