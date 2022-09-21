@@ -5,7 +5,6 @@ export class Director extends Entity {
   birth_year?: string;
   nationality?: string;
   movies: Array<number>;
-  image?: string;
 
   constructor(
     id: number | undefined = undefined,
@@ -15,7 +14,7 @@ export class Director extends Entity {
     movies: Array<number> = new Array<number>(),
     image: string | undefined = 'default.png'
   ) {
-    super(id);
+    super(id, image);
     this.name = name;
     this.birth_year = birth_year;
     this.nationality = nationality;

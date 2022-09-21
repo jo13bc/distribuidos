@@ -7,7 +7,7 @@ export class Service<E extends Entity> {
   }
 
   async insert(entity: E): Promise<any> {
-    return await fetch(`/.netlify/functions/${this.entity_name}`, {
+    return await fetch(`/.netlify/functions/${this.entity_name}/-1`, {
       headers: { "Content-Type": "application/json" },
       method: "POST",
       mode: "cors",

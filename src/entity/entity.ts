@@ -1,6 +1,8 @@
-export class Entity{
-    id?: number;
-    constructor(id: number | undefined){
-        this.id = id;
-    }
+export class Entity {
+  id?: number;
+  image: string;
+  constructor(id: number | undefined, image: string) {
+    this.id = id;
+    this.image = image;
+  }
 }

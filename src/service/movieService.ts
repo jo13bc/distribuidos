@@ -8,11 +8,9 @@ export class MovieService extends Service<Movie> {
     super("movie");
   }
 
-  async listStydies(id: number): Promise<Array<Study>> {
+  async listStydies(ids: Array<number>): Promise<Array<Study>> {
     return await fetch(
-      `/.netlify/functions/${
-        this.entity_name
-      }/${id}/studies/`,
+      `/.netlify/functions/study/[${ids}]/byMovie`,
       {
         headers: { "Content-Type": "application/json" },
         method: "GET",

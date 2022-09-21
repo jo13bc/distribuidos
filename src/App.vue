@@ -1,7 +1,7 @@
 <template>
     <main>
         <Header />
-        <b-container id="container" ref="container" :toast="{root: true}" class="mt-3" fluid="sm">
+        <b-container id="container" :toast="{root: true}" class="mt-5 mb-5" fluid="sm">
             <router-view />
         </b-container>
         <Footer />

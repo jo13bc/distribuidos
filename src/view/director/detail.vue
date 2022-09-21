@@ -1,87 +1,121 @@
 <template>
-  <b-modal id="entityModal" :title="title">
+  <b-card :title="title">
     <b-form-group label-for="image">
-      <b-img center rounded="circle" v-bind="mainProps" v-bind:src="loadImage(entity.image)" />
+      <b-img center rounded="circle" v-bind="detailImage" v-bind:src="loadImage(entity.image, ENTITY.director.name)" />
       <b-form-input id="image" v-model="entity.image" trim hidden />
     </b-form-group>
     <b-form-group description="Ingresa tu nombre" label="Nombre:" label-for="name">
-      <b-form-input id="name" v-model="entity.name" trim />
+      <b-form-input id="name" v-model="entity.name" trim :disabled="!edit" />
     </b-form-group>
     <b-form-group description="Ingresa tu fecha de nacimiento" label="Fecha nacimiento:" label-for="birth_year">
-      <b-form-input id="birth_year" v-model="entity.birth_year" trim />
+      <b-form-input id="birth_year" v-model="entity.birth_year" trim :disabled="!edit" />
     </b-form-group>
     <b-form-group description="Ingresa tu nacionalidad" label="Nacionalidad:" label-for="nationality">
-      <b-form-input id="nationality" v-model="entity.nationality" trim />
+      <b-form-input id="nationality" v-model="entity.nationality" trim :disabled="!edit" />
     </b-form-group>
-    <b-form-group label-for="table">
-      <b-table id="table" :items="movies" :fields="table_header" responsive>
+    <b-form-group label-for="table" v-if="entity.id !== undefined">
+      <b-table id="table" :items="movies" :fields="TABLE_HEADER_MOVIE" responsive>
         <template #cell(image)="data">
-          <b-img rounded="circle" v-bind="mainPropsMovie" v-bind:src="loadImage(data.value, false)" />
+          <b-img rounded="circle" v-bind="tableImage" v-bind:src="loadImage(data.value, ENTITY.movie.name)" />
         </template>
         <template #cell(nameid)="data">
-          <b-link>
+          <router-link class="button button-primary" :to="'/movie/show/' + data.item.id">
             {{data.item.name}}
-          </b-link>
+          </router-link>
         </template>
       </b-table>
     </b-form-group>
     <template #footer>
-      <b-container fluid v-if="showSave">
+      <b-container fluid v-if="edit">
         <b-row>
           <b-col class="text-end">
-            <b-button ref="btnCancel" v-b-modal.entityModal @click="cancel" variant="secondary">Cancelar</b-button>
+            <b-button variant="secondary" @click="cancelEntity">Cancelar</b-button>
           </b-col>
           <b-col class="text-left">
-            <b-button ref="btnSave" v-b-modal.entityModal @click="save" variant="primary">Guardar</b-button>
+            <b-button variant="primary" @click="saveEntity">Guardar</b-button>
           </b-col>
         </b-row>
       </b-container>
       <b-container fluid v-else>
         <b-row>
           <b-col class="text-center">
-            <b-button ref="btnCancel" v-b-modal.entityModal @click="cancel" variant="secondary">Cancelar</b-button>
+            <b-button variant="secondary" @click="cancelEntity">Cancelar</b-button>
           </b-col>
         </b-row>
       </b-container>
     </template>
-  </b-modal>
+  </b-card>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { Movie } from '../../entity/movie';
-import { DirectorService } from '../../service/directorService';
 import { Filter } from '../../entity/filter';
-const TABLE_HEADER = [
+import { MovieService } from '../../service/movieService';
+import { DirectorService } from '../../service/directorService';
+import { Movie } from '../../entity/movie';
+import { Director } from '../../entity/director';
+import { useRoute } from 'vue-router';
+import Swal from 'sweetalert2';
+import { ENTITY, swal, detailImage, tableImage, loadImage } from '../../entity/utils';
+
+const TABLE_HEADER_MOVIE = [
   new Filter("image", ""),
   new Filter("nameid", "Películas")
 ];
 
 export default defineComponent({
-  props: ['title', 'entity', 'save', 'cancel', 'showSave'],
+  props: ['edit', 'title'],
   data() {
     return {
-      mainProps: { blank: false, width: 150, height: 150 },
-      mainPropsMovie: { blank: false, width: 45, height: 45 },
-      table_header: TABLE_HEADER,
-      movies: Array<Movie>(),
-      directorService: new DirectorService()
+      detailImage,
+      entity: new Director(),
+      movieService: new MovieService(),
+      directorService: new DirectorService(),
+      ENTITY,
+      tableImage,
+      TABLE_HEADER_MOVIE,
+      movies: new Array<Movie>(),
     };
   },
-  updated() {
-    this.listMovie();
+  created() {
+    const params: any = useRoute().params;
+    this.findDirector(params.id);
   },
   methods: {
-    loadImage(url: string, director: boolean = true): string {
-      return `/image/${director ? 'director' : 'movie'}/` + url;
-    },
-    listMovie() {
-      if (this.entity.id !== null && this.entity.id !== undefined) {
-        this.directorService.listMovies(this.entity.id)
+    loadImage: (n: string, e: string) => loadImage(n, e, useRoute()),
+    findMovies(ids: Array<number>): void {
+      if (ids !== undefined) {
+        this.directorService.listMovies(ids)
           .then(result => this.movies = result);
       } else {
         this.movies = [];
       }
-    }
+    },
+    findDirector(id: number) {
+      if (id === undefined) {
+        this.entity = new Director();
+        this.movies = [];
+      } else {
+        this.directorService.find(id)
+          .then(result => {
+            this.entity = result;
+            this.findMovies(result.movies);
+          });
+      }
+    },
+    cancelEntity() {
+      this.$router.push('/director');
+    },
+    saveEntity(): void {
+      if (this.entity.id === undefined) {
+        this.directorService.insert(this.entity)
+          .then(message => Swal.fire(swal(message)).then(r => this.cancelEntity()))
+          .catch(err => Swal.fire(swal(err)));
+      } else {
+        this.directorService.update(this.entity)
+          .then(message => Swal.fire(swal(message)).then(r => this.cancelEntity()))
+          .catch(err => Swal.fire(swal(err)));
+      }
+    },
   }
 });
 </script>

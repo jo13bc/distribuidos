@@ -4,7 +4,6 @@ export class Movie extends Entity {
   name?: string;
   directorId?: number;
   studies: Array<number>;
-  image?: string;
 
   constructor(
     id: number | undefined = undefined,
@@ -13,7 +12,7 @@ export class Movie extends Entity {
     studies: Array<number> = new Array<number>(),
     image: string | undefined = 'default.png'
   ) {
-    super(id);
+    super(id, image);
     this.name = name;
     this.directorId = directorId;
     this.studies = studies;

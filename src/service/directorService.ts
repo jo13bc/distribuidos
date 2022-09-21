@@ -7,11 +7,9 @@ export class DirectorService extends Service<Director> {
     super("director");
   }
 
-  async listMovies(id: number): Promise<Array<Movie>> {
+  async listMovies(ids: Array<number>): Promise<Array<Movie>> {
     return await fetch(
-      `/.netlify/functions/${
-        this.entity_name
-      }/${id}/movies/`,
+      `/.netlify/functions/movie/[${ids}]/byDirector/`,
       {
         headers: { "Content-Type": "application/json" },
         method: "GET",

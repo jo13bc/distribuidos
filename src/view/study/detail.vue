@@ -1,81 +1,115 @@
 <template>
-  <b-modal id="entityModal" :title="title">
+  <b-card :title="title">
     <b-form-group label-for="image">
-      <b-img center rounded="circle" v-bind="mainProps" v-bind:src="loadImage(entity.image)" />
+      <b-img center rounded="circle" v-bind="detailImage" v-bind:src="loadImage(entity.image, ENTITY.study.name)" />
       <b-form-input id="image" v-model="entity.image" trim hidden />
     </b-form-group>
     <b-form-group description="Ingresa tu nombre" label="Nombre:" label-for="name">
-      <b-form-input id="name" v-model="entity.name" trim />
+      <b-form-input id="name" v-model="entity.name" trim :disabled="!edit" />
     </b-form-group>
-    <b-form-group label-for="table">
-      <b-table id="table" :items="movies" :fields="table_header" responsive>
+    <b-form-group label-for="table" v-if="entity.id !== undefined">
+      <b-table id="table" :items="movies" :fields="TABLE_HEADER_MOVIE" responsive>
         <template #cell(image)="data">
-          <b-img rounded="circle" v-bind="mainPropsMovie" v-bind:src="loadImage(data.value, false)" />
+          <b-img rounded="circle" v-bind="tableImage" v-bind:src="loadImage(data.value, ENTITY.movie.name)" />
         </template>
         <template #cell(nameid)="data">
-          <b-link>
+          <router-link class="button button-primary" :to="'/movie/show/' + data.item.id">
             {{data.item.name}}
-          </b-link>
+          </router-link>
         </template>
       </b-table>
     </b-form-group>
     <template #footer>
-      <b-container fluid v-if="showSave">
+      <b-container fluid v-if="edit">
         <b-row>
           <b-col class="text-end">
-            <b-button ref="btnCancel" v-b-modal.entityModal @click="cancel" variant="secondary">Cancelar</b-button>
+            <b-button variant="secondary" @click="cancelEntity">Cancelar</b-button>
           </b-col>
           <b-col class="text-left">
-            <b-button ref="btnSave" v-b-modal.entityModal @click="save" variant="primary">Guardar</b-button>
+            <b-button variant="primary" @click="saveEntity">Guardar</b-button>
           </b-col>
         </b-row>
       </b-container>
       <b-container fluid v-else>
         <b-row>
           <b-col class="text-center">
-            <b-button ref="btnCancel" v-b-modal.entityModal @click="cancel" variant="secondary">Cancelar</b-button>
+            <b-button variant="secondary" @click="cancelEntity">Cancelar</b-button>
           </b-col>
         </b-row>
       </b-container>
     </template>
-  </b-modal>
+  </b-card>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { Movie } from '../../entity/movie';
-import { StudyService } from '../../service/studyService';
-import { Filter } from '../../entity/filter';
-const TABLE_HEADER = [
-  new Filter("image", ""),
-  new Filter("nameid", "Películas")
-];
-
-export default defineComponent({
-  props: ['title', 'entity', 'save', 'cancel', 'showSave'],
-  data() {
-    return {
-      mainProps: { blank: false, width: 150, height: 150 },
-      mainPropsMovie: { blank: false, width: 45, height: 45 },
-      table_header: TABLE_HEADER,
-      movies: Array<Movie>(),
-      studyService: new StudyService()
-    };
-  },
-  updated() {
-    this.listMovie();
-  },
-  methods: {
-    loadImage(url: string, study: boolean = true): string {
-      return `/image/${study ? 'study' : 'movie'}/` + url;
+  import { defineComponent } from 'vue';
+  import { Filter } from '../../entity/filter';
+  import { MovieService } from '../../service/movieService';
+  import { StudyService } from '../../service/studyService';
+  import { Movie } from '../../entity/movie';
+  import { Study } from '../../entity/study';
+  import { useRoute } from 'vue-router';
+  import Swal from 'sweetalert2';
+  import { ENTITY, swal, detailImage, tableImage, loadImage } from '../../entity/utils';
+  
+  const TABLE_HEADER_MOVIE = [
+    new Filter("image", ""),
+    new Filter("nameid", "Películas")
+  ];
+  
+  export default defineComponent({
+    props: ['edit', 'title'],
+    data() {
+      return {
+        detailImage,
+        entity: new Study(),
+        movieService: new MovieService(),
+        studyService: new StudyService(),
+        ENTITY,
+        tableImage,
+        TABLE_HEADER_MOVIE,
+        movies: new Array<Movie>(),
+      };
     },
-    listMovie() {
-      if (this.entity.id !== null && this.entity.id !== undefined) {
-        this.studyService.listMovies(this.entity.id)
-          .then(result => this.movies = result);
-      } else {
-        this.movies = [];
-      }
+    created() {
+      const params: any = useRoute().params;
+      this.findDirector(params.id);
+    },
+    methods: {
+      loadImage: (n: string, e: string) => loadImage(n, e, useRoute()),
+      findMovies(ids: Array<number>): void {
+        if (ids !== undefined) {
+          this.studyService.listMovies(ids)
+            .then(result => this.movies = result);
+        } else {
+          this.movies = [];
+        }
+      },
+      findDirector(id: number) {
+        if (id === undefined) {
+          this.entity = new Study();
+          this.movies = [];
+        } else {
+          this.studyService.find(id)
+            .then(result => {
+              this.entity = result;
+              this.findMovies(result.movies);
+            });
+        }
+      },
+      cancelEntity() {
+        this.$router.push('/study');
+      },
+      saveEntity(): void {
+        if (this.entity.id === undefined) {
+          this.studyService.insert(this.entity)
+            .then(message => Swal.fire(swal(message)).then(r => this.cancelEntity()))
+            .catch(err => Swal.fire(swal(err)));
+        } else {
+          this.studyService.update(this.entity)
+            .then(message => Swal.fire(swal(message)).then(r => this.cancelEntity()))
+            .catch(err => Swal.fire(swal(err)));
+        }
+      },
     }
-  }
-});
-</script>
+  });
+  </script>

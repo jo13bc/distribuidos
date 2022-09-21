@@ -7,11 +7,11 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faTrash, faEye, faPen } from "@fortawesome/free-solid-svg-icons";
 
-library.add(faTrash, faEye, faPen);
-
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue-3/dist/bootstrap-vue-3.css";
 import "sweetalert2/dist/sweetalert2.min.css";
+
+library.add(faTrash, faEye, faPen);
 
 createApp(App)
   .use(router)
