@@ -5,12 +5,12 @@
       <template #cell(image)="data">
         <b-img rounded="circle" v-bind="tableImage" v-bind:src="loadImage(data.value)" />
       </template>
-      <template #cell(nameid)="data">
-        <b-link @click="loadEntity(ACTION.detail, data.item.id)">
+      <template #cell(name_id)="data">
+        <b-link @click="loadEntity(ACTION.detail, data.item._id)">
           {{data.item.name}}
         </b-link>
       </template>
-      <template #cell(id)="data">
+      <template #cell(_id)="data">
         <b-link @click="loadEntity(ACTION.update, data.value)">
           <fa-icon icon="fa-solid fa-pen" size="xl" />
         </b-link>
@@ -33,8 +33,8 @@ import { useRoute } from 'vue-router';
 
 const TABLE_HEADER = [
   new Filter("image", "Fotografía"),
-  new Filter("nameid", "Nombre"),
-  new Filter("id", "Acciones")
+  new Filter("name_id", "Nombre"),
+  new Filter("_id", "Acciones")
 ];
 
 export default defineComponent({
@@ -58,7 +58,8 @@ export default defineComponent({
     },
     allEntities(): void {
       this.service.list()
-        .then(result => this.entities = result);
+        .then(result => this.entities = result)
+        .catch(err => Swal.fire(swal(err)));
     },
     deleteEntity(id: any): void {
       this.service.delete(id)

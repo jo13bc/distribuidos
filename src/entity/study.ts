@@ -5,17 +5,17 @@ export class Study extends Entity {
   movies: Array<number>;
 
   constructor(
-    id: number | undefined = undefined,
+    _id: number | undefined = undefined,
     name: string | undefined = undefined,
     movies: Array<number> = new Array<number>(),
     image: string = 'default.png'
   ) {
-    super(id, image);
+    super(_id, image);
     this.name = name;
     this.movies = movies;
   }
 
   static clone(s: Study): Study {
-    return new Study(s.id, s.name, s.movies, s.image);
+    return new Study(s._id, s.name, s.movies, s.image);
   }
 }

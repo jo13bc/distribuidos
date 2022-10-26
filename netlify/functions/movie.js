@@ -1,149 +1,108 @@
 'use strict';
+const { MongoClient } = require('mongodb');
 const express = require('express');
 const serverless = require('serverless-http');
-const exp = express();
 const bodyParser = require('body-parser');
-
-let movies = [{
-        "id": 1,
-        "name": "Bichos - Una aventura en miniatura",
-        "directorId": 4,
-        "studies": [2, 4],
-        "image": "bichos.jpeg"
-    },
-    {
-        "id": 2,
-        "name": "Lluvia de hamburguesas",
-        "directorId": 6,
-        "studies": [5],
-        "image": "CloudyWithAchanceOfMeatballs.jpg"
-    },
-    {
-        "id": 3,
-        "name": "Kung Fu Panda 2",
-        "directorId": 3,
-        "studies": [1, 3],
-        "image": "Kung_fu_panda.jpeg"
-    },
-    {
-        "id": 4,
-        "name": "Luca",
-        "directorId": 2,
-        "studies": [2, 4],
-        "image": "Luca.jpg"
-    },
-    {
-        "id": 5,
-        "name": "Los Minios",
-        "directorId": 7,
-        "studies": [6],
-        "image": "minions.jpeg"
-    },
-    {
-        "id": 6,
-        "name": "Moana",
-        "directorId": 9,
-        "studies": [2, 7],
-        "image": "Moana.jpg"
-    },
-    {
-        "id": 7,
-        "name": "Monsters Inc",
-        "directorId": 5,
-        "studies": [2, 4],
-        "image": "monstersinc.webp"
-    },
-    {
-        "id": 8,
-        "name": "Señor Peabody y Sherman",
-        "directorId": 8,
-        "studies": [1, 3],
-        "image": "PeabodyAndSherman.jpg"
-    },
-    {
-        "id": 9,
-        "name": "Ratatouille",
-        "directorId": 1,
-        "studies": [2, 4],
-        "image": "Ratatouille.jpeg"
-    },
-    {
-        "id": 10,
-        "name": "Los increíbles",
-        "directorId": 1,
-        "studies": [2, 4],
-        "image": "TheIncredibles.jpg"
-    },
-    {
-        "id": 11,
-        "name": "Toy Story",
-        "directorId": 4,
-        "studies": [2, 4],
-        "image": "ToyStory.jpg"
-    },
-    {
-        "id": 12,
-        "name": "UP - una aventura de altura",
-        "directorId": 5,
-        "studies": [2, 4],
-        "image": "Up.jpeg"
-    }
-];
+const exp = express();
 
 const app = express.Router();
-app.get('/', (req, res) => {
-    res.status(200).json(movies);
+const nameDB = "store";
+const nameColle = "movie";
+const client = new MongoClient(
+    `${process.env.MONGODB_URI.replace('"','')}`, { useNewUrlParser: true, useUnifiedTopology: true }
+);
+
+async function db(callback) {
+    const conexion = await client.connect();
+    const result = await callback(conexion.db(nameDB).collection(nameColle));
+    await client.close();
+    return result;
+}
+
+function response(status, message, body) {
+    return { status, message, body };
+}
+
+function success(body, message = undefined) {
+    return response(200, message, body);
+}
+
+function error(message) {
+    return response(404, message, undefined);
+}
+
+app.get('/', async (req, res) => {
+    db(conexion =>
+        conexion.find({}).toArray()
+    ).then(movies => {
+        res.status(200).json(success(movies));
+    }).catch(err => {
+        res.status(404).json(error(`${err}`));
+    })
 });
-app.get('/:id', (req, res) => {
-    let movie = movies.find(i => i.id == req.params.id);
-    if (movie == undefined)
-        res.status(404).send({ code: 404, message: 'La película no existe' });
-    else
-        res.status(200).json(movie);
+app.get('/:_id', (req, res) => {
+    let _id = parseInt(req.params._id);
+    db(conexion =>
+        conexion.findOne({_id})
+    ).then(movie => {
+        if (movie) res.status(200).json(success(movie));
+        else res.status(404).json(error('No existe la película'));
+    }).catch(err => {
+        res.status(404).json(error(`${err}`));
+    });
 });
-app.post('/:id', (req, res) => {
-    let index = movies.findIndex(i => i.id == req.params.id);
-    if (index != -1)
-        res.status(404).send({ code: 404, message: 'La película ya existe' });
-    else {
-        req.body.id = movies.length + 1;
-        movies.push(req.body);
-        res.status(200).send({ code: 200, message: 'La película fue insertada exitosamente' });
-    }
+app.post('/', (req, res) => {
+    db(conexion =>
+        conexion.insertOne(req.body)
+    ).then(movie => {
+        res.status(200).json(success(movie, 'La película fue insertada exitosamente'));
+    }).catch(err => {
+        res.status(404).json(error(`${err}`));
+    });
 });
-app.put('/:id', (req, res) => {
-    let index = movies.findIndex(i => i.id == req.params.id);
-    if (index == -1)
-        res.status(404).send({ code: 404, message: 'La película no existe' });
-    else {
-        movies[index] = req.body;
-        res.status(200).send({ code: 200, message: 'La película fue actualizada exitosamente' });
-    }
+app.put('/:_id', (req, res) => {
+    let _id = parseInt(req.params._id);
+    db(conexion =>
+        conexion.updateOne({ _id }, { $set: req.body })
+    ).then(movie => {
+        res.status(200).json(success(movie, 'La película fue actualizada exitosamente'));
+    }).catch(err => {
+        res.status(404).json(error(`${err}`));
+    });
 });
-app.delete('/:id', (req, res) => {
-    let index = movies.findIndex(i => i.id == req.params.id);
-    if (index == -1)
-        res.status(404).send({ code: 404, message: 'La película no existe' });
-    else {
-        movies = movies.filter(i => i.id != req.params.id);
-        res.status(200).send({ code: 200, message: 'La película fue eliminada exitosamente' });
-    }
+app.delete('/:_id', (req, res) => {
+    let _id = parseInt(req.params._id);
+    db(conexion =>
+        conexion.deleteOne({ _id })
+    ).then(movie => {
+        res.status(200).json(success(movie, 'La película fue eliminada exitosamente'));
+    }).catch(err => {
+        res.status(404).json(error(`${err}`));
+    });
 });
 
-app.get('/:array/byDirector', (req, res) => {
-    let result = movies.filter(i => req.params.array.includes(i.id));
-    if (result == undefined)
-        res.status(404).send({ code: 404, message: 'Las películas no existen' });
-    else
-        res.status(200).json(result);
+app.get('/byDirector/:_id', (req, res) => {
+    let _id = parseInt(req.params._id);
+    db(conexion =>
+        conexion.find({ directorId: _id }).toArray()
+    ).then(movies => {
+        if (movies) res.status(200).json(success(movies));
+        else res.status(404).json(error('Las películas no existen'));
+    }).catch(err => {
+        res.status(404).json(error(`${err}`));
+    });
 });
 
-app.get('/:array/byStudy', (req, res) => {
-    let result = movies.filter(i => req.params.array.includes(i.id));
-    if (result == undefined)
-        res.status(404).send({ code: 404, message: 'Las películas no existen' });
-    else
-        res.status(200).json(result);
+app.get('/byStudy/:_id', (req, res) => {
+    let _id = parseInt(req.params._id);
+    db(conexion =>
+        conexion.find({ studies: _id }).toArray()
+    ).then(movies => {
+        if (movies) res.status(200).json(success(movies));
+        else res.status(404).json(error('Las películas no existen'));
+    }).catch(err => {
+        res.status(404).json(error(`${err}`));
+    });
 });
 
 exp.use(bodyParser.json());

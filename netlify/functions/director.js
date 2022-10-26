@@ -1,121 +1,84 @@
 'use strict';
+const { MongoClient } = require('mongodb');
 const express = require('express');
 const serverless = require('serverless-http');
-const exp = express();
 const bodyParser = require('body-parser');
-
-let movies = [{
-        "id": 1,
-        "name": "Brad Bird",
-        "birth_year": "24 de septiembre de 1957",
-        "nationality": "Estadounidense",
-        "movies": [9, 10],
-        "image": "BradBird.jpg"
-    },
-    {
-        "id": 2,
-        "name": "Erico Casarosa",
-        "birth_year": "19 de octubre de 1971",
-        "nationality": "Italiano",
-        "movies": [4],
-        "image": "EnricoCasarosa.jpg"
-    },
-    {
-        "id": 3,
-        "name": "Jennifer Yuh Nelson",
-        "birth_year": "1972",
-        "nationality": "Sur Coreana",
-        "movies": [3],
-        "image": "Jennifer_Yuh_Nelson.jpg"
-    },
-    {
-        "id": 4,
-        "name": "John Lasseter",
-        "birth_year": "1957",
-        "nationality": "Estadounidense",
-        "movies": [1, 11],
-        "image": "JohnLasseter.jpg"
-    },
-    {
-        "id": 5,
-        "name": "Pete Docter",
-        "birth_year": "9 de octubre de 1968",
-        "nationality": "Estadounidense",
-        "movies": [7, 12],
-        "image": "petedocter.png"
-    },
-    {
-        "id": 6,
-        "name": "Phil Lord",
-        "birth_year": "12 de julio de 1975",
-        "nationality": "Estadounidense",
-        "movies": [2],
-        "image": "PhilLord.png"
-    },
-    {
-        "id": 7,
-        "name": "Pierre Coffin",
-        "birth_year": "1 de noviembre de 1967",
-        "nationality": "Francés",
-        "movies": [5],
-        "image": "pierrecoffin.jpeg"
-    },
-    {
-        "id": 8,
-        "name": "Rob Minkoff",
-        "birth_year": "11 de agosto de 1962",
-        "nationality": "Estadounidense",
-        "movies": [8],
-        "image": "RobMinkoff.jpg"
-    },
-    {
-        "id": 9,
-        "name": "Ron Clements",
-        "birth_year": "25 de abril de 1953",
-        "nationality": "Estadounidense",
-        "movies": [6],
-        "image": "RonClements.jpg"
-    }
-];
+const exp = express();
 
 const app = express.Router();
-app.get('/', (req, res) => {
-    res.status(200).json(movies);
+const nameDB = "store";
+const nameColle = "director";
+const client = new MongoClient(
+    `${process.env.MONGODB_URI.replace('"', '')}`, { useNewUrlParser: true, useUnifiedTopology: true }
+);
+
+async function db(callback) {
+    const conexion = await client.connect();
+    const result = await callback(conexion.db(nameDB).collection(nameColle));
+    await client.close();
+    return result;
+}
+
+function response(status, message, body) {
+    return { status, message, body };
+}
+
+function success(body, message = undefined) {
+    return response(200, message, body);
+}
+
+function error(message) {
+    return response(404, message, undefined);
+}
+
+app.get('/', async (req, res) => {
+    db(conexion =>
+        conexion.find({}).toArray()
+    ).then(movies => {
+        res.status(200).json(success(movies));
+    }).catch(err => {
+        res.status(404).json(error(`${err}`));
+    })
 });
-app.get('/:id', (req, res) => {
-    let movie = movies.find(i => i.id == req.params.id);
-    if (movie == undefined)
-        res.status(404).send({ code: 404, message: 'El director no existe' });
-    else
-        res.status(200).json(movie);
+app.get('/:_id', (req, res) => {
+    let _id = parseInt(req.params._id);
+    db(conexion =>
+        conexion.findOne({ _id })
+    ).then(movie => {
+        if (movie) res.status(200).json(success(movie));
+        else res.status(404).json(error('No existe el director'));
+    }).catch(err => {
+        res.status(404).json(error(`${err}`));
+    });
 });
-app.post('/:id', (req, res) => {
-    let index = movies.findIndex(i => i.id == req.params.id);
-    if (index != -1)
-        res.status(404).send({ code: 404, message: 'El director ya existe' });
-    else {
-        req.body.id = movies.length + 1;
-        movies.push(req.body);
-        res.status(200).send({ code: 200, message: 'El director fue insertado exitosamente' });
-    }
+app.post('/', (req, res) => {
+    db(conexion =>
+        conexion.insertOne(req.body)
+    ).then(director => {
+        res.status(200).json(success(director, 'El director fue insertado exitosamente'));
+    }).catch(err => {
+        res.status(404).json(error(`${err}`));
+    });
 });
-app.put('/', (req, res) => {
-    let index = movies.findIndex(i => i.id == req.params.id);
-    if (index == -1)
-        res.status(404).send({ code: 404, message: 'El director no existe' });
-    else {
-        movies[index] = req.body;
-        res.status(200).send({ code: 200, message: 'El director fue actualizado exitosamente' });
-    }
+app.put('/:_id', (req, res) => {
+    let _id = parseInt(req.params._id);
+    db(conexion =>
+        conexion.updateOne({ _id }, { $set: req.body })
+    ).then(director => {
+        res.status(200).json(success(director, 'El director fue actualizado exitosamente'));
+    }).catch(err => {
+        res.status(404).json(error(`${err}`));
+    });
 });
-app.delete('/:id', (req, res) => {
-    let index = movies.findIndex(i => i.id == req.params.id);
-    if (index == -1)
-        res.status(404).send({ code: 404, message: 'El director no existe' });
-    else {
-        movies = movies.filter(i => i.id != req.params.id);
-        res.status(200).send({ code: 200, message: 'El director fue eliminado exitosamente' });
-    }
+app.delete('/:_id', (req, res) => {
+    let _id = parseInt(req.params._id);
+    db(conexion =>
+        conexion.deleteOne({ _id })
+    ).then(director => {
+        res.status(200).json(success(director, 'El director fue eliminado exitosamente'));
+    }).catch(err => {
+        res.status(404).json(error(`${err}`));
+    });
 });
 
 

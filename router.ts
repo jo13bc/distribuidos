@@ -23,13 +23,13 @@ const routes = [
     props: { edit: true, title: ENTITY.movie.insert }
   },
   {
-    path: "/movie/edit/:id",
+    path: "/movie/edit/:_id",
     name: "Movie Edit",
     component: MovieDetail,
     props: { edit: true, title: ENTITY.movie.update }
   },
   {
-    path: "/movie/show/:id",
+    path: "/movie/show/:_id",
     name: "Movie Detail",
     component: MovieDetail,
     props: { edit: false, title: ENTITY.movie.detail }
@@ -47,13 +47,13 @@ const routes = [
     props: { edit: true, title: ENTITY.study.insert }
   },
   {
-    path: "/study/edit/:id",
+    path: "/study/edit/:_id",
     name: "Study Edit",
     component: StudyDetail,
     props: { edit: true, title: ENTITY.study.update }
   },
   {
-    path: "/study/show/:id",
+    path: "/study/show/:_id",
     name: "Study Detail",
     component: StudyDetail,
     props: { edit: false, title: ENTITY.study.detail }
@@ -71,13 +71,13 @@ const routes = [
     props: { edit: true, title: ENTITY.director.insert }
   },
   {
-    path: "/director/edit/:id",
+    path: "/director/edit/:_id",
     name: "Director Edit",
     component: DirectorDetail,
     props: { edit: true, title: ENTITY.director.update }
   },
   {
-    path: "/director/show/:id",
+    path: "/director/show/:_id",
     name: "Director Detail",
     component: DirectorDetail,
     props: { edit: false, title: ENTITY.director.detail },

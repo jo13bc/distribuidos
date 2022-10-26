@@ -1,3 +1,5 @@
+import { Response } from './response';
+
 export const ACTION = {
   insert: "Insertar",
   update: "Actualizar",
@@ -30,14 +32,14 @@ export const ENTITY = {
 };
 
 const SWALTYPE = {
-  err: { type: "error", title: "Error" },
-  succ: { type: "success", title: "Éxito" },
-  warn: { type: "waring", title: "Advertencia" },
+  err: { type: "error", title: "Mensaje de Error" },
+  succ: { type: "success", title: "Mensaje de Información" },
+  warn: { type: "waring", title: "Mensaje de Advertencia" },
 };
 
-export function swal(message: any) {
+export function swal(response: Response<any>) {
   let type: any = SWALTYPE.succ;
-  switch (message.code) {
+  switch (response.status) {
     case 404: {
       type = SWALTYPE.err;
     }
@@ -45,7 +47,7 @@ export function swal(message: any) {
   return {
     icon: type.type,
     title: type.title,
-    text: message.message,
+    text: response.message,
   };
 }
 
@@ -57,10 +59,10 @@ export function loadImage(name: string, entity: string, route: any) {
 export function loadEntity(
   action: string,
   entity: string,
-  id: number | undefined = undefined
+  _id: number | undefined = undefined
 ): string {
-  if (id === undefined) return `/${entity}/new`;
-  return `/${entity}/${action === ACTION.update ? "edit" : "show"}/${id}`;
+  if (_id === undefined) return `/${entity}/new`;
+  return `/${entity}/${action === ACTION.update ? "edit" : "show"}/${_id}`;
 }
 
 export const tableImage = { blank: false, width: 45, height: 45 };

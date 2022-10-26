@@ -13,8 +13,11 @@ import "sweetalert2/dist/sweetalert2.min.css";
 
 library.add(faTrash, faEye, faPen);
 
-createApp(App)
-  .use(router)
+const app = createApp(App);
+
+app.config.globalProperties.url = 'https://movie-mongo.netlify.app';
+
+app.use(router)
   .use(BootstrapVue3)
   .use(BToastPlugin)
   .use(VueSweetalert2)
