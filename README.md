@@ -1,4 +1,4 @@
-# distribuidos_proyecto_01
-Proyecto 01 de Sistemas Distribuidos
+# tarea_03
+Tarea 03 de Sistemas Distribuidos
 
-Enlace: https://distribuidos-proyecto01.netlify.app/
+Enlace: https://tarea03.netlify.app/
