@@ -16,6 +16,6 @@ export class Study extends Entity {
   }
 
   static clone(s: Study): Study {
-    return new Study(s._id, s.name, s.movies, s.image);
+    return new Study(s.id, s.name, s.movies, s.image);
   }
 }

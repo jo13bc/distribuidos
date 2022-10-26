@@ -7,13 +7,13 @@
     <b-form-group description="Ingresa tu nombre" label="Nombre:" label-for="name">
       <b-form-input id="name" v-model="entity.name" trim :disabled="!edit" />
     </b-form-group>
-    <b-form-group label-for="table" v-if="entity._id !== undefined">
+    <b-form-group label-for="table" v-if="entity.id !== undefined">
       <b-table id="table" :items="movies" :fields="TABLE_HEADER_MOVIE" responsive>
         <template #cell(image)="data">
           <b-img rounded="circle" v-bind="tableImage" v-bind:src="loadImage(data.value, ENTITY.movie.name)" />
         </template>
-        <template #cell(name_id)="data">
-          <router-link class="button button-primary" :to="'/movie/show/' + data.item._id">
+        <template #cell(nameid)="data">
+          <router-link class="button button-primary" :to="'/movie/show/' + data.item.id">
             {{data.item.name}}
           </router-link>
         </template>
@@ -53,7 +53,7 @@
   
   const TABLE_HEADER_MOVIE = [
     new Filter("image", ""),
-    new Filter("name_id", "Películas")
+    new Filter("nameid", "Películas")
   ];
   
   export default defineComponent({
@@ -72,7 +72,7 @@
     },
     created() {
       const params: any = useRoute().params;
-      this.findDirector(params._id);
+      this.findDirector(params.id);
     },
     methods: {
       loadImage: (n: string, e: string) => loadImage(n, e, useRoute()),
@@ -85,23 +85,24 @@
           this.movies = [];
         }
       },
-      findDirector(_id: number) {
-        if (_id === undefined) {
+      findDirector(id: number) {
+        if (id === undefined) {
           this.entity = new Study();
           this.movies = [];
         } else {
-          this.studyService.find(_id)
+          this.studyService.find(id)
             .then(result => {
               this.entity = result;
               this.findMovies(result.movies);
-            });
+            })
+          .catch(err => Swal.fire(swal(err)).then(r => this.cancelEntity()));
         }
       },
       cancelEntity() {
         this.$router.push('/study');
       },
       saveEntity(): void {
-        if (this.entity._id === undefined) {
+        if (this.entity.id === undefined) {
           this.studyService.insert(this.entity)
             .then(message => Swal.fire(swal(message)).then(r => this.cancelEntity()))
             .catch(err => Swal.fire(swal(err)));

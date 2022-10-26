@@ -40,10 +40,14 @@ app.get('/', async (req, res) => {
         res.status(404).json(error(`${err}`));
     })
 });
-app.get('/:_id', (req, res) => {
-    let _id = parseInt(req.params._id);
+app.get('/:id', (req, res) => {
+    let id = parseInt(req.params.id);
+    if (!id || id === -1) {
+        res.status(404).json(error('Identificador inválido'));
+        return;
+    }
     db(conexion =>
-        conexion.findOne({ _id })
+        conexion.findOne({ id })
     ).then(study => {
         if (study) res.status(200).json(success(study));
         else res.status(404).json(error('No existe el estudio'));
@@ -51,7 +55,9 @@ app.get('/:_id', (req, res) => {
         res.status(404).json(error(`${err}`));
     });
 });
-app.post('/', (req, res) => {
+app.post('/:id', (req, res) => {
+    let id = parseInt(req.params.id);
+    req.body.id = (!id || id === -1) ? undefined : id;
     db(conexion =>
         conexion.insertOne(req.body)
     ).then(study => {
@@ -60,30 +66,42 @@ app.post('/', (req, res) => {
         res.status(404).json(error(`${err}`));
     });
 });
-app.put('/:_id', (req, res) => {
-    let _id = parseInt(req.params._id);
+app.put('/:id', (req, res) => {
+    let id = parseInt(req.params.id);
+    if (!id || id === -1) {
+        res.status(404).json(error('Identificador inválido'));
+        return;
+    }
     db(conexion =>
-        conexion.updateOne({ _id }, { $set: req.body })
+        conexion.updateOne({ id }, { $set: req.body })
     ).then(study => {
         res.status(200).json(success(study, 'El estudio fue actualizado exitosamente'));
     }).catch(err => {
         res.status(404).json(error(`${err}`));
     });
 });
-app.delete('/:_id', (req, res) => {
-    let _id = parseInt(req.params._id);
+app.delete('/:id', (req, res) => {
+    let id = parseInt(req.params.id);
+    if (!id || id === -1) {
+        res.status(404).json(error('Identificador inválido'));
+        return;
+    }
     db(conexion =>
-        conexion.deleteOne({ _id })
+        conexion.deleteOne({ id })
     ).then(study => {
         res.status(200).json(success(study, 'El estudio fue eliminado exitosamente'));
     }).catch(err => {
         res.status(404).json(error(`${err}`));
     });
 });
-app.get('/byMovie/:_id', (req, res) => {
-    let _id = parseInt(req.params._id);
+app.get('/byMovie/:id', (req, res) => {
+    let id = parseInt(req.params.id);
+    if (!id || id === -1) {
+        res.status(404).json(error('Identificador inválido'));
+        return;
+    }
     db(conexion =>
-        conexion.find({ movies: _id }).toArray()
+        conexion.find({ movies: id }).toArray()
     ).then(studies => {
         if (studies) res.status(200).json(success(studies));
         else res.status(404).json(error('Los estudios no existen'));

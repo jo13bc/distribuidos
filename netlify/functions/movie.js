@@ -9,7 +9,7 @@ const app = express.Router();
 const nameDB = "store";
 const nameColle = "movie";
 const client = new MongoClient(
-    `${process.env.MONGODB_URI.replace('"','')}`, { useNewUrlParser: true, useUnifiedTopology: true }
+    `${process.env.MONGODB_URI.replace('"', '')}`, { useNewUrlParser: true, useUnifiedTopology: true }
 );
 
 async function db(callback) {
@@ -40,10 +40,14 @@ app.get('/', async (req, res) => {
         res.status(404).json(error(`${err}`));
     })
 });
-app.get('/:_id', (req, res) => {
-    let _id = parseInt(req.params._id);
+app.get('/:id', (req, res) => {
+    let id = parseInt(req.params.id);
+    if (!id || id === -1) {
+        res.status(404).json(error('Identificador inválido'));
+        return;
+    }
     db(conexion =>
-        conexion.findOne({_id})
+        conexion.findOne({ id })
     ).then(movie => {
         if (movie) res.status(200).json(success(movie));
         else res.status(404).json(error('No existe la película'));
@@ -60,20 +64,28 @@ app.post('/', (req, res) => {
         res.status(404).json(error(`${err}`));
     });
 });
-app.put('/:_id', (req, res) => {
-    let _id = parseInt(req.params._id);
+app.put('/:id', (req, res) => {
+    let id = parseInt(req.params.id);
+    if (!id || id === -1) {
+        res.status(404).json(error('Identificador inválido'));
+        return;
+    }
     db(conexion =>
-        conexion.updateOne({ _id }, { $set: req.body })
+        conexion.updateOne({ id }, { $set: req.body })
     ).then(movie => {
         res.status(200).json(success(movie, 'La película fue actualizada exitosamente'));
     }).catch(err => {
         res.status(404).json(error(`${err}`));
     });
 });
-app.delete('/:_id', (req, res) => {
-    let _id = parseInt(req.params._id);
+app.delete('/:id', (req, res) => {
+    let id = parseInt(req.params.id);
+    if (!id || id === -1) {
+        res.status(404).json(error('Identificador inválido'));
+        return;
+    }
     db(conexion =>
-        conexion.deleteOne({ _id })
+        conexion.deleteOne({ id })
     ).then(movie => {
         res.status(200).json(success(movie, 'La película fue eliminada exitosamente'));
     }).catch(err => {
@@ -81,10 +93,14 @@ app.delete('/:_id', (req, res) => {
     });
 });
 
-app.get('/byDirector/:_id', (req, res) => {
-    let _id = parseInt(req.params._id);
+app.get('/byDirector/:id', (req, res) => {
+    let id = parseInt(req.params.id);
+    if (!id || id === -1) {
+        res.status(404).json(error('Identificador inválido'));
+        return;
+    }
     db(conexion =>
-        conexion.find({ directorId: _id }).toArray()
+        conexion.find({ directorId: id }).toArray()
     ).then(movies => {
         if (movies) res.status(200).json(success(movies));
         else res.status(404).json(error('Las películas no existen'));
@@ -93,10 +109,14 @@ app.get('/byDirector/:_id', (req, res) => {
     });
 });
 
-app.get('/byStudy/:_id', (req, res) => {
-    let _id = parseInt(req.params._id);
+app.get('/byStudy/:id', (req, res) => {
+    let id = parseInt(req.params.id);
+    if (!id || id === -1) {
+        res.status(404).json(error('Identificador inválido'));
+        return;
+    }
     db(conexion =>
-        conexion.find({ studies: _id }).toArray()
+        conexion.find({ studies: id }).toArray()
     ).then(movies => {
         if (movies) res.status(200).json(success(movies));
         else res.status(404).json(error('Las películas no existen'));

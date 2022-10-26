@@ -13,13 +13,13 @@
     <b-form-group description="Ingresa tu nacionalidad" label="Nacionalidad:" label-for="nationality">
       <b-form-input id="nationality" v-model="entity.nationality" trim :disabled="!edit" />
     </b-form-group>
-    <b-form-group label-for="table" v-if="entity._id !== undefined">
+    <b-form-group label-for="table" v-if="entity.id !== undefined">
       <b-table id="table" :items="movies" :fields="TABLE_HEADER_MOVIE" responsive>
         <template #cell(image)="data">
           <b-img rounded="circle" v-bind="tableImage" v-bind:src="loadImage(data.value, ENTITY.movie.name)" />
         </template>
-        <template #cell(name_id)="data">
-          <router-link class="button button-primary" :to="'/movie/show/' + data.item._id">
+        <template #cell(nameid)="data">
+          <router-link class="button button-primary" :to="'/movie/show/' + data.item.id">
             {{data.item.name}}
           </router-link>
         </template>
@@ -59,7 +59,7 @@ import { ENTITY, swal, detailImage, tableImage, loadImage } from '../../entity/u
 
 const TABLE_HEADER_MOVIE = [
   new Filter("image", ""),
-  new Filter("name_id", "Películas")
+  new Filter("nameid", "Películas")
 ];
 
 export default defineComponent({
@@ -78,36 +78,36 @@ export default defineComponent({
   },
   created() {
     const params: any = useRoute().params;
-    this.findDirector(params._id);
+    this.findDirector(params.id);
   },
   methods: {
     loadImage: (n: string, e: string) => loadImage(n, e, useRoute()),
-    findMovies(_id: number): void {
-      if (_id !== undefined) {
-        this.directorService.listMovies(_id)
+    findMovies(id: number): void {
+      if (id !== undefined) {
+        this.directorService.listMovies(id)
           .then(result => this.movies = result)
           .catch(err => Swal.fire(swal(err)));
       } else {
         this.movies = [];
       }
     },
-    findDirector(_id: number) {
-      if (_id === undefined) {
+    findDirector(id: number) {
+      if (id === undefined) {
         this.entity = new Director();
         this.movies = [];
       } else {
-        this.directorService.find(_id)
+        this.directorService.find(id)
           .then(result => {
             this.entity = result;
-            this.findMovies(_id);
-          }).catch(err => Swal.fire(swal(err)));;
+            this.findMovies(id);
+          }).catch(err => Swal.fire(swal(err)).then(r => this.cancelEntity()));
       }
     },
     cancelEntity() {
       this.$router.push('/director');
     },
     saveEntity(): void {
-      if (this.entity._id === undefined) {
+      if (this.entity.id === undefined) {
         this.directorService.insert(this.entity)
           .then(message => Swal.fire(swal(message)).then(r => this.cancelEntity()))
           .catch(err => Swal.fire(swal(err)));

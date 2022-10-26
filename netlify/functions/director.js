@@ -40,10 +40,14 @@ app.get('/', async (req, res) => {
         res.status(404).json(error(`${err}`));
     })
 });
-app.get('/:_id', (req, res) => {
-    let _id = parseInt(req.params._id);
+app.get('/:id', (req, res) => {
+    let id = parseInt(req.params.id);
+    if (!id || id === -1) {
+        res.status(404).json(error('Identificador inválido'));
+        return;
+    }
     db(conexion =>
-        conexion.findOne({ _id })
+        conexion.findOne({ id })
     ).then(movie => {
         if (movie) res.status(200).json(success(movie));
         else res.status(404).json(error('No existe el director'));
@@ -51,7 +55,9 @@ app.get('/:_id', (req, res) => {
         res.status(404).json(error(`${err}`));
     });
 });
-app.post('/', (req, res) => {
+app.post('/:id', (req, res) => {
+    let id = parseInt(req.params.id);
+    req.body.id = (!id || id === -1) ? undefined : id;
     db(conexion =>
         conexion.insertOne(req.body)
     ).then(director => {
@@ -60,20 +66,28 @@ app.post('/', (req, res) => {
         res.status(404).json(error(`${err}`));
     });
 });
-app.put('/:_id', (req, res) => {
-    let _id = parseInt(req.params._id);
+app.put('/:id', (req, res) => {
+    let id = parseInt(req.params.id);
+    if (!id || id === -1) {
+        res.status(404).json(error('Identificador inválido'));
+        return;
+    }
     db(conexion =>
-        conexion.updateOne({ _id }, { $set: req.body })
+        conexion.updateOne({ id }, { $set: req.body })
     ).then(director => {
         res.status(200).json(success(director, 'El director fue actualizado exitosamente'));
     }).catch(err => {
         res.status(404).json(error(`${err}`));
     });
 });
-app.delete('/:_id', (req, res) => {
-    let _id = parseInt(req.params._id);
+app.delete('/:id', (req, res) => {
+    let id = parseInt(req.params.id);
+    if (!id || id === -1) {
+        res.status(404).json(error('Identificador inválido'));
+        return;
+    }
     db(conexion =>
-        conexion.deleteOne({ _id })
+        conexion.deleteOne({ id })
     ).then(director => {
         res.status(200).json(success(director, 'El director fue eliminado exitosamente'));
     }).catch(err => {

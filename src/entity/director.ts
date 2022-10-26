@@ -23,7 +23,7 @@ export class Director extends Entity {
   }
   static clone(d: Director): any {
     return new Director(
-      d._id,
+      d.id,
       d.name,
       d.birth_year,
       d.nationality,

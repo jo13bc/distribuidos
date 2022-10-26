@@ -8,7 +8,7 @@ export class Service<E extends Entity> {
   }
 
   async insert(entity: E): Promise<any> {
-    return await fetch(`/.netlify/functions/${this.entity_name}/-1`, {
+    return await fetch(`/.netlify/functions/${this.entity_name}`, {
       headers: { "Content-Type": "application/json" },
       method: "POST",
       mode: "cors",
@@ -18,7 +18,7 @@ export class Service<E extends Entity> {
   }
 
   async update(entity: E): Promise<any> {
-    return await fetch(`/.netlify/functions/${this.entity_name}/${entity._id}`, {
+    return await fetch(`/.netlify/functions/${this.entity_name}/${entity.id}`, {
       headers: { "Content-Type": "application/json" },
       method: "PUT",
       mode: "cors",
