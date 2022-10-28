@@ -55,9 +55,7 @@ app.get('/:_id', (req, res) => {
         res.status(404).json(error(`${err}`));
     });
 });
-app.post('/:_id', (req, res) => {
-    let _id = req.params._id
-    req.body._id = (!_id || _id === '-1') ? undefined : _id;
+app.post('/', (req, res) => {
     db(conexion =>
         conexion.insertOne(req.body)
     ).then(study => {

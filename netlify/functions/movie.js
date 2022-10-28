@@ -41,13 +41,13 @@ app.get('/', async (req, res) => {
     })
 });
 app.get('/:_id', (req, res) => {
-    let id = req.params._id
-    if (!id || id === '-1') {
+    let _id = req.params._id
+    if (!_id || _id === '-1') {
         res.status(404).json(error('Identificador inválido'));
         return;
     }
     db(conexion =>
-        conexion.findOne({ id })
+        conexion.findOne({ _id })
     ).then(movie => {
         if (movie) res.status(200).json(success(movie));
         else res.status(404).json(error('No existe la película'));
