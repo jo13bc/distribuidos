@@ -65,13 +65,13 @@ app.post('/', (req, res) => {
     });
 });
 app.put('/:_id', (req, res) => {
-    let id = req.params._id
-    if (!id || id === '-1') {
+    let _id = req.params._id
+    if (!_id || _id === '-1') {
         res.status(404).json(error('Identificador inválido'));
         return;
     }
     db(conexion =>
-        conexion.updateOne({ id }, { $set: req.body })
+        conexion.updateOne({ _id }, { $set: req.body })
     ).then(movie => {
         res.status(200).json(success(movie, 'La película fue actualizada exitosamente'));
     }).catch(err => {
@@ -79,13 +79,13 @@ app.put('/:_id', (req, res) => {
     });
 });
 app.delete('/:_id', (req, res) => {
-    let id = req.params._id
-    if (!id || id === '-1') {
+    let _id = req.params._id
+    if (!_id || _id === '-1') {
         res.status(404).json(error('Identificador inválido'));
         return;
     }
     db(conexion =>
-        conexion.deleteOne({ id })
+        conexion.deleteOne({ _id })
     ).then(movie => {
         res.status(200).json(success(movie, 'La película fue eliminada exitosamente'));
     }).catch(err => {
@@ -94,13 +94,13 @@ app.delete('/:_id', (req, res) => {
 });
 
 app.get('/byDirector/:_id', (req, res) => {
-    let id = req.params._id
-    if (!id || id === '-1') {
+    let _id = req.params._id
+    if (!_id || _id === '-1') {
         res.status(404).json(error('Identificador inválido'));
         return;
     }
     db(conexion =>
-        conexion.find({ directorId: id }).toArray()
+        conexion.find({ directorId: _id }).toArray()
     ).then(movies => {
         if (movies) res.status(200).json(success(movies));
         else res.status(404).json(error('Las películas no existen'));
@@ -110,13 +110,13 @@ app.get('/byDirector/:_id', (req, res) => {
 });
 
 app.get('/byStudy/:_id', (req, res) => {
-    let id = req.params._id
-    if (!id || id === '-1') {
+    let _id = req.params._id
+    if (!_id || _id === '-1') {
         res.status(404).json(error('Identificador inválido'));
         return;
     }
     db(conexion =>
-        conexion.find({ studies: id }).toArray()
+        conexion.find({ studies: _id }).toArray()
     ).then(movies => {
         if (movies) res.status(200).json(success(movies));
         else res.status(404).json(error('Las películas no existen'));

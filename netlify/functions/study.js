@@ -41,13 +41,13 @@ app.get('/', async (req, res) => {
     })
 });
 app.get('/:_id', (req, res) => {
-    let id = req.params._id
-    if (!id || id === '-1') {
+    let _id = req.params._id
+    if (!_id || _id === '-1') {
         res.status(404).json(error('Identificador inválido'));
         return;
     }
     db(conexion =>
-        conexion.findOne({ id })
+        conexion.findOne({ _id })
     ).then(study => {
         if (study) res.status(200).json(success(study));
         else res.status(404).json(error('No existe el estudio'));
@@ -56,8 +56,8 @@ app.get('/:_id', (req, res) => {
     });
 });
 app.post('/:_id', (req, res) => {
-    let id = req.params._id
-    req.body.id = (!id || id === '-1') ? undefined : id;
+    let _id = req.params._id
+    req.body._id = (!_id || _id === '-1') ? undefined : _id;
     db(conexion =>
         conexion.insertOne(req.body)
     ).then(study => {
@@ -67,13 +67,13 @@ app.post('/:_id', (req, res) => {
     });
 });
 app.put('/:_id', (req, res) => {
-    let id = req.params._id
-    if (!id || id === '-1') {
+    let _id = req.params._id
+    if (!_id || _id === '-1') {
         res.status(404).json(error('Identificador inválido'));
         return;
     }
     db(conexion =>
-        conexion.updateOne({ id }, { $set: req.body })
+        conexion.updateOne({ _id }, { $set: req.body })
     ).then(study => {
         res.status(200).json(success(study, 'El estudio fue actualizado exitosamente'));
     }).catch(err => {
@@ -81,13 +81,13 @@ app.put('/:_id', (req, res) => {
     });
 });
 app.delete('/:_id', (req, res) => {
-    let id = req.params._id
-    if (!id || id === '-1') {
+    let _id = req.params._id
+    if (!_id || _id === '-1') {
         res.status(404).json(error('Identificador inválido'));
         return;
     }
     db(conexion =>
-        conexion.deleteOne({ id })
+        conexion.deleteOne({ _id })
     ).then(study => {
         res.status(200).json(success(study, 'El estudio fue eliminado exitosamente'));
     }).catch(err => {
@@ -95,13 +95,13 @@ app.delete('/:_id', (req, res) => {
     });
 });
 app.get('/byMovie/:_id', (req, res) => {
-    let id = req.params._id
-    if (!id || id === '-1') {
+    let _id = req.params._id
+    if (!_id || _id === '-1') {
         res.status(404).json(error('Identificador inválido'));
         return;
     }
     db(conexion =>
-        conexion.find({ movies: id }).toArray()
+        conexion.find({ movies: _id }).toArray()
     ).then(studies => {
         if (studies) res.status(200).json(success(studies));
         else res.status(404).json(error('Los estudios no existen'));

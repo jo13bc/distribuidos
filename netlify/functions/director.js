@@ -41,13 +41,13 @@ app.get('/', async (req, res) => {
     })
 });
 app.get('/:_id', (req, res) => {
-    let id = req.params._id
-    if (!id || id === '-1') {
+    let _id = req.params._id
+    if (!_id || _id === '-1') {
         res.status(404).json(error('Identificador inválido'));
         return;
     }
     db(conexion =>
-        conexion.findOne({ id })
+        conexion.findOne({ _id })
     ).then(movie => {
         if (movie) res.status(200).json(success(movie));
         else res.status(404).json(error('No existe el director'));
@@ -56,8 +56,8 @@ app.get('/:_id', (req, res) => {
     });
 });
 app.post('/:_id', (req, res) => {
-    let id = req.params._id
-    req.body.id = (!id || id === '-1') ? undefined : id;
+    let _id = req.params._id
+    req.body.id = (!_id || _id === '-1') ? undefined : _id;
     db(conexion =>
         conexion.insertOne(req.body)
     ).then(director => {
@@ -67,13 +67,13 @@ app.post('/:_id', (req, res) => {
     });
 });
 app.put('/:_id', (req, res) => {
-    let id = req.params._id
-    if (!id || id === '-1') {
+    let _id = req.params._id
+    if (!_id || _id === '-1') {
         res.status(404).json(error('Identificador inválido'));
         return;
     }
     db(conexion =>
-        conexion.updateOne({ id }, { $set: req.body })
+        conexion.updateOne({ _id }, { $set: req.body })
     ).then(director => {
         res.status(200).json(success(director, 'El director fue actualizado exitosamente'));
     }).catch(err => {
@@ -81,13 +81,13 @@ app.put('/:_id', (req, res) => {
     });
 });
 app.delete('/:_id', (req, res) => {
-    let id = req.params._id
-    if (!id || id === '-1') {
+    let _id = req.params._id
+    if (!_id || _id === '-1') {
         res.status(404).json(error('Identificador inválido'));
         return;
     }
     db(conexion =>
-        conexion.deleteOne({ id })
+        conexion.deleteOne({ _id })
     ).then(director => {
         res.status(200).json(success(director, 'El director fue eliminado exitosamente'));
     }).catch(err => {
