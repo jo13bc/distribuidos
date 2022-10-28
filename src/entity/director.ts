@@ -7,7 +7,7 @@ export class Director extends Entity {
   movies: Array<number>;
 
   constructor(
-    _id: number | undefined = undefined,
+    _id: string | undefined = undefined,
     name: string | undefined = undefined,
     birth_year: string | undefined = undefined,
     nationality: string | undefined = undefined,
@@ -23,7 +23,7 @@ export class Director extends Entity {
   }
   static clone(d: Director): any {
     return new Director(
-      d.id,
+      d._id,
       d.name,
       d.birth_year,
       d.nationality,

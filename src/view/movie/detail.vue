@@ -21,8 +21,8 @@
             <template #cell(image)="data">
               <b-img rounded="circle" v-bind="tableImage" v-bind:src="loadImage(data.value, ENTITY.director.name)" />
             </template>
-            <template #cell(nameid)="data">
-              <router-link class="button button-primary" :to="'/director/show/' + data.item.id">
+            <template #cell(name_id)="data">
+              <router-link class="button button-primary" :to="'/director/show/' + data.item._id">
                 {{ data.item.name }}
               </router-link>
             </template>
@@ -34,7 +34,7 @@
               <b-img rounded="circle" v-bind="tableImage" v-bind:src="loadImage(data.value, ENTITY.study.name)" />
             </template>
             <template #cell(nameid)="data">
-              <router-link class="button button-primary" :to="'/study/show/' + data.item.id">
+              <router-link class="button button-primary" :to="'/study/show/' + data.item._id">
                 {{ data.item.name }}
               </router-link>
             </template>
@@ -108,7 +108,7 @@ export default defineComponent({
   },
   created() {
     const params: any = useRoute().params;
-    this.findMovie(params.id);
+    this.findMovie(params._id);
     this.listDirector();
     this.listStudy();
   },
@@ -116,42 +116,42 @@ export default defineComponent({
     loadImage: (n: string, e: string) => loadImage(n, e, useRoute()),
     listDirector() {
       this.directorService.list()
-        .then(result => this.directoresSelect = result.map(e => new Select(e.name, e.id)))
+        .then(result => this.directoresSelect = result.map(e => new Select(e.name, e._id)))
         .catch(err => Swal.fire(swal(err)));
     },
     listStudy() {
       this.studyService.list()
-        .then(result => this.studiesSelect = result.map(e => new Select(e.name, e.id)))
+        .then(result => this.studiesSelect = result.map(e => new Select(e.name, e._id)))
         .catch(err => Swal.fire(swal(err)));
     },
-    findDirector(id: number | undefined): void {
-      if (id !== undefined) {
-        this.directorService.find(id)
+    findDirector(_id: number | undefined): void {
+      if (_id !== undefined) {
+        this.directorService.find(_id)
           .then(result => this.directores = [result])
           .catch(err => Swal.fire(swal(err)));
       } else {
         this.directores = [];
       }
     },
-    findStudies(id: number): void {
-      if (id !== undefined) {
-        this.movieService.listStydies(id)
+    findStudies(_id: number): void {
+      if (_id !== undefined) {
+        this.movieService.listStydies(_id)
           .then(result => this.studies = result)
           .catch(err => Swal.fire(swal(err)));
       } else {
         this.studies = [];
       }
     },
-    findMovie(id: number) {
-      if (id === undefined) {
+    findMovie(_id: number) {
+      if (_id === undefined) {
         this.entity = new Movie();
       } else {
-        this.movieService.find(id)
+        this.movieService.find(_id)
           .then(result => {
             this.entity = result;
             if (!this.edit) {
               this.findDirector(result.directorId);
-              this.findStudies(id);
+              this.findStudies(_id);
             }
           })
           .catch(err => Swal.fire(swal(err)).then(r => this.cancelEntity()));
@@ -161,7 +161,7 @@ export default defineComponent({
       this.$router.push('/movie');
     },
     saveEntity(): void {
-      if (this.entity.id == undefined) {
+      if (this.entity._id == undefined) {
         this.movieService.insert(this.entity)
           .then(message => Swal.fire(swal(message)).then(r => this.cancelEntity()))
           .catch(err => Swal.fire(swal(err)));

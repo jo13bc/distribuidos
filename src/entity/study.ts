@@ -5,7 +5,7 @@ export class Study extends Entity {
   movies: Array<number>;
 
   constructor(
-    _id: number | undefined = undefined,
+    _id: string | undefined = undefined,
     name: string | undefined = undefined,
     movies: Array<number> = new Array<number>(),
     image: string = 'default.png'
@@ -16,6 +16,6 @@ export class Study extends Entity {
   }
 
   static clone(s: Study): Study {
-    return new Study(s.id, s.name, s.movies, s.image);
+    return new Study(s._id, s.name, s.movies, s.image);
   }
 }

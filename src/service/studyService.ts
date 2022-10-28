@@ -8,10 +8,10 @@ export class StudyService extends Service<Study> {
     super("study");
   }
 
-  async listMovies(id: number): Promise<Array<Movie>> {
+  async listMovies(_id: string): Promise<Array<Movie>> {
     return new Promise<Array<Movie>>((resolve, reject) => {
       fetch(
-        `/.netlify/functions/movie/byStudy/${id}`, {
+        `/.netlify/functions/movie/byStudy/${_id}`, {
         headers: { "Content-Type": "application/json" },
         method: "GET",
         mode: "cors",

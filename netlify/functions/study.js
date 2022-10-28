@@ -40,9 +40,9 @@ app.get('/', async (req, res) => {
         res.status(404).json(error(`${err}`));
     })
 });
-app.get('/:id', (req, res) => {
-    let id = parseInt(req.params.id);
-    if (!id || id === -1) {
+app.get('/:_id', (req, res) => {
+    let id = req.params._id
+    if (!id || id === '-1') {
         res.status(404).json(error('Identificador inválido'));
         return;
     }
@@ -55,9 +55,9 @@ app.get('/:id', (req, res) => {
         res.status(404).json(error(`${err}`));
     });
 });
-app.post('/:id', (req, res) => {
-    let id = parseInt(req.params.id);
-    req.body.id = (!id || id === -1) ? undefined : id;
+app.post('/:_id', (req, res) => {
+    let id = req.params._id
+    req.body.id = (!id || id === '-1') ? undefined : id;
     db(conexion =>
         conexion.insertOne(req.body)
     ).then(study => {
@@ -66,9 +66,9 @@ app.post('/:id', (req, res) => {
         res.status(404).json(error(`${err}`));
     });
 });
-app.put('/:id', (req, res) => {
-    let id = parseInt(req.params.id);
-    if (!id || id === -1) {
+app.put('/:_id', (req, res) => {
+    let id = req.params._id
+    if (!id || id === '-1') {
         res.status(404).json(error('Identificador inválido'));
         return;
     }
@@ -80,9 +80,9 @@ app.put('/:id', (req, res) => {
         res.status(404).json(error(`${err}`));
     });
 });
-app.delete('/:id', (req, res) => {
-    let id = parseInt(req.params.id);
-    if (!id || id === -1) {
+app.delete('/:_id', (req, res) => {
+    let id = req.params._id
+    if (!id || id === '-1') {
         res.status(404).json(error('Identificador inválido'));
         return;
     }
@@ -94,9 +94,9 @@ app.delete('/:id', (req, res) => {
         res.status(404).json(error(`${err}`));
     });
 });
-app.get('/byMovie/:id', (req, res) => {
-    let id = parseInt(req.params.id);
-    if (!id || id === -1) {
+app.get('/byMovie/:_id', (req, res) => {
+    let id = req.params._id
+    if (!id || id === '-1') {
         res.status(404).json(error('Identificador inválido'));
         return;
     }

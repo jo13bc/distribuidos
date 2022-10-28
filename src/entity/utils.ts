@@ -59,10 +59,10 @@ export function loadImage(name: string, entity: string, route: any) {
 export function loadEntity(
   action: string,
   entity: string,
-  id: number | undefined = undefined
+  _id: string | undefined = undefined
 ): string {
-  if (id === undefined) return `/${entity}/new`;
-  return `/${entity}/${action === ACTION.update ? "edit" : "show"}/${id}`;
+  if (_id === undefined) return `/${entity}/new`;
+  return `/${entity}/${action === ACTION.update ? "edit" : "show"}/${_id}`;
 }
 
 export const tableImage = { blank: false, width: 45, height: 45 };

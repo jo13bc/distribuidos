@@ -9,9 +9,9 @@ export class MovieService extends Service<Movie> {
     super("movie");
   }
 
-  async listStydies(id: number): Promise<Array<Study>> {
+  async listStydies(_id: string): Promise<Array<Study>> {
     return new Promise<Array<Study>>((resolve, reject) => {
-      fetch(`/.netlify/functions/study/byMovie/${id}`, {
+      fetch(`/.netlify/functions/study/byMovie/${_id}`, {
         headers: { "Content-Type": "application/json" },
         method: "GET",
         mode: "cors",
@@ -29,9 +29,9 @@ export class MovieService extends Service<Movie> {
     });
   }
 
-  async listDirector(id: number): Promise<Director> {
+  async listDirector(_id: string): Promise<Director> {
     return new Promise<Director>((resolve, reject) => {
-      fetch(`/.netlify/functions/director/byMovie/${id}`, {
+      fetch(`/.netlify/functions/director/byMovie/${_id}`, {
         headers: { "Content-Type": "application/json" },
         method: "GET",
         mode: "cors",

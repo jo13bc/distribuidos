@@ -40,9 +40,9 @@ app.get('/', async (req, res) => {
         res.status(404).json(error(`${err}`));
     })
 });
-app.get('/:id', (req, res) => {
-    let id = parseInt(req.params.id);
-    if (!id || id === -1) {
+app.get('/:_id', (req, res) => {
+    let id = req.params._id
+    if (!id || id === '-1') {
         res.status(404).json(error('Identificador inválido'));
         return;
     }
@@ -64,9 +64,9 @@ app.post('/', (req, res) => {
         res.status(404).json(error(`${err}`));
     });
 });
-app.put('/:id', (req, res) => {
-    let id = parseInt(req.params.id);
-    if (!id || id === -1) {
+app.put('/:_id', (req, res) => {
+    let id = req.params._id
+    if (!id || id === '-1') {
         res.status(404).json(error('Identificador inválido'));
         return;
     }
@@ -78,9 +78,9 @@ app.put('/:id', (req, res) => {
         res.status(404).json(error(`${err}`));
     });
 });
-app.delete('/:id', (req, res) => {
-    let id = parseInt(req.params.id);
-    if (!id || id === -1) {
+app.delete('/:_id', (req, res) => {
+    let id = req.params._id
+    if (!id || id === '-1') {
         res.status(404).json(error('Identificador inválido'));
         return;
     }
@@ -93,9 +93,9 @@ app.delete('/:id', (req, res) => {
     });
 });
 
-app.get('/byDirector/:id', (req, res) => {
-    let id = parseInt(req.params.id);
-    if (!id || id === -1) {
+app.get('/byDirector/:_id', (req, res) => {
+    let id = req.params._id
+    if (!id || id === '-1') {
         res.status(404).json(error('Identificador inválido'));
         return;
     }
@@ -109,9 +109,9 @@ app.get('/byDirector/:id', (req, res) => {
     });
 });
 
-app.get('/byStudy/:id', (req, res) => {
-    let id = parseInt(req.params.id);
-    if (!id || id === -1) {
+app.get('/byStudy/:_id', (req, res) => {
+    let id = req.params._id
+    if (!id || id === '-1') {
         res.status(404).json(error('Identificador inválido'));
         return;
     }

@@ -6,13 +6,13 @@ export class Movie extends Entity {
   studies: Array<number>;
 
   constructor(
-    id: number | undefined = undefined,
+    _id: string | undefined = undefined,
     name: string | undefined = undefined,
     directorId: number | undefined = undefined,
     studies: Array<number> = new Array<number>(),
     image: string | undefined = 'default.png'
   ) {
-    super(id, image);
+    super(_id, image);
     this.name = name;
     this.directorId = directorId;
     this.studies = studies;
@@ -20,6 +20,6 @@ export class Movie extends Entity {
   }
 
   static clone(m: Movie): Movie {
-    return new Movie(m.id, m.name, m.directorId, m.studies, m.image);
+    return new Movie(m._id, m.name, m.directorId, m.studies, m.image);
   }
 }

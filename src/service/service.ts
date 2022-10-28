@@ -18,7 +18,7 @@ export class Service<E extends Entity> {
   }
 
   async update(entity: E): Promise<any> {
-    return await fetch(`/.netlify/functions/${this.entity_name}/${entity.id}`, {
+    return await fetch(`/.netlify/functions/${this.entity_name}/${entity._id}`, {
       headers: { "Content-Type": "application/json" },
       method: "PUT",
       mode: "cors",
@@ -27,8 +27,8 @@ export class Service<E extends Entity> {
     }).then((response) => response.json());
   }
 
-  async delete(id: number): Promise<any> {
-    return await fetch(`/.netlify/functions/${this.entity_name}/${id}`, {
+  async delete(_id: string): Promise<any> {
+    return await fetch(`/.netlify/functions/${this.entity_name}/${_id}`, {
       headers: { "Content-Type": "application/json" },
       method: "DELETE",
       mode: "cors",
@@ -36,9 +36,9 @@ export class Service<E extends Entity> {
     }).then((response) => response.json());
   }
 
-  async find(id: number): Promise<E> {
+  async find(_id: string): Promise<E> {
     return new Promise<E>((resolve, reject) => {
-      fetch(`/.netlify/functions/${this.entity_name}/${id}`, {
+      fetch(`/.netlify/functions/${this.entity_name}/${_id}`, {
         headers: { "Content-Type": "application/json" },
         method: "GET",
         mode: "cors",
