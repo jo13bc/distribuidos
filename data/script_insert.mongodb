@@ -1,205 +1,170 @@
 use('store');
-db.director.drop();
-db.director.insertMany([{
-        "_id": 1,
-        "name": "Brad Bird",
-        "birth_year": "24 de septiembre de 1957",
-        "nationality": "Estadounidense",
-        "movies": [9, 10],
-        "image": "BradBird.jpg"
-    },
-    {
-        "_id": 2,
-        "name": "Erico Casarosa",
-        "birth_year": "19 de octubre de 1971",
-        "nationality": "Italiano",
-        "movies": [4],
-        "image": "EnricoCasarosa.jpg"
-    },
-    {
-        "_id": 3,
-        "name": "Jennifer Yuh Nelson",
-        "birth_year": "1972",
-        "nationality": "Sur Coreana",
-        "movies": [3],
-        "image": "Jennifer_Yuh_Nelson.jpg"
-    },
-    {
-        "_id": 4,
-        "name": "John Lasseter",
-        "birth_year": "1957",
-        "nationality": "Estadounidense",
-        "movies": [1, 11],
-        "image": "JohnLasseter.jpg"
-    },
-    {
-        "_id": 5,
-        "name": "Pete Docter",
-        "birth_year": "9 de octubre de 1968",
-        "nationality": "Estadounidense",
-        "movies": [7, 12],
-        "image": "petedocter.png"
-    },
-    {
-        "_id": 6,
-        "name": "Phil Lord",
-        "birth_year": "12 de julio de 1975",
-        "nationality": "Estadounidense",
-        "movies": [2],
-        "image": "PhilLord.png"
-    },
-    {
-        "_id": 7,
-        "name": "Pierre Coffin",
-        "birth_year": "1 de noviembre de 1967",
-        "nationality": "Francés",
-        "movies": [5],
-        "image": "pierrecoffin.jpeg"
-    },
-    {
-        "_id": 8,
-        "name": "Rob Minkoff",
-        "birth_year": "11 de agosto de 1962",
-        "nationality": "Estadounidense",
-        "movies": [8],
-        "image": "RobMinkoff.jpg"
-    },
-    {
-        "_id": 9,
-        "name": "Ron Clements",
-        "birth_year": "25 de abril de 1953",
-        "nationality": "Estadounidense",
-        "movies": [6],
-        "image": "RonClements.jpg"
-    }
-]);
-db.study.drop();
-db.study.insertMany([{
-        "_id": 1,
-        "name": "21st Century Fox",
-        "movies": [3, 8],
-        "image": "21stCenturyFox.jpg"
-    },
-    {
-        "_id": 2,
-        "name": "Walt Disney Pictures",
-        "movies": [1, 4, 6, 7, 9, 10, 11, 12],
-        "image": "Disney.jpg"
-    },
-    {
-        "_id": 3,
-        "name": "DreamWorks",
-        "movies": [3, 8],
-        "image": "DreamWorks.jpg"
-    },
-    {
-        "_id": 4,
-        "name": "Pixar Animation Studios",
-        "movies": [1, 4, 7, 9, 10, 11, 12],
-        "image": "Pixar.jpg"
-    },
-    {
-        "_id": 5,
-        "name": "Sony Pictures Home Entertainment",
-        "movies": [2],
-        "image": "SonyPictures.jpg"
-    },
-    {
-        "_id": 6,
-        "name": "Universal Pictures",
-        "movies": [5],
-        "image": "UniversalPictures.jpeg"
-    },
-    {
-        "_id": 7,
-        "name": "Walt Disney Animation Studios",
-        "movies": [6],
-        "image": "WaltDisneyAnimationStudios.jpg"
-    }
-]);
-db.movie.drop();
-db.movie.insertMany([{
-        "_id": 1,
-        "name": "Bichos - Una aventura en miniatura",
-        "directorId": 4,
-        "studies": [2, 4],
-        "image": "bichos.jpeg"
-    },
-    {
-        "_id": 2,
-        "name": "Lluvia de hamburguesas",
-        "directorId": 6,
-        "studies": [5],
-        "image": "CloudyWithAchanceOfMeatballs.jpg"
-    },
-    {
-        "_id": 3,
-        "name": "Kung Fu Panda 2",
-        "directorId": 3,
-        "studies": [1, 3],
-        "image": "Kung_fu_panda.jpeg"
-    },
-    {
-        "_id": 4,
-        "name": "Luca",
-        "directorId": 2,
-        "studies": [2, 4],
-        "image": "Luca.jpg"
-    },
-    {
-        "_id": 5,
-        "name": "Los Minios",
-        "directorId": 7,
-        "studies": [6],
-        "image": "minions.jpeg"
-    },
-    {
-        "_id": 6,
-        "name": "Moana",
-        "directorId": 9,
-        "studies": [2, 7],
-        "image": "Moana.jpg"
-    },
-    {
-        "_id": 7,
-        "name": "Monsters Inc",
-        "directorId": 5,
-        "studies": [2, 4],
-        "image": "monstersinc.webp"
-    },
-    {
-        "_id": 8,
-        "name": "Señor Peabody y Sherman",
-        "directorId": 8,
-        "studies": [1, 3],
-        "image": "PeabodyAndSherman.jpg"
-    },
-    {
-        "_id": 9,
-        "name": "Ratatouille",
-        "directorId": 1,
-        "studies": [2, 4],
-        "image": "Ratatouille.jpeg"
-    },
-    {
-        "_id": 10,
-        "name": "Los increíbles",
-        "directorId": 1,
-        "studies": [2, 4],
-        "image": "TheIncredibles.jpg"
-    },
-    {
-        "_id": 11,
-        "name": "Toy Story",
-        "directorId": 4,
-        "studies": [2, 4],
-        "image": "ToyStory.jpg"
-    },
-    {
-        "_id": 12,
-        "name": "UP - una aventura de altura",
-        "directorId": 5,
-        "studies": [2, 4],
-        "image": "Up.jpeg"
-    }
-]);
+
+async function inserts(){
+    db.director.drop();
+    let directorIdsAux = await db.director.insertMany([{
+            "name": "Brad Bird",
+            "birth_year": "24 de septiembre de 1957",
+            "nationality": "Estadounidense",
+            "image": "BradBird.jpg"
+        },
+        {
+            "name": "Erico Casarosa",
+            "birth_year": "19 de octubre de 1971",
+            "nationality": "Italiano",
+            "image": "EnricoCasarosa.jpg"
+        },
+        {
+            "name": "Jennifer Yuh Nelson",
+            "birth_year": "1972",
+            "nationality": "Sur Coreana",
+            "image": "Jennifer_Yuh_Nelson.jpg"
+        },
+        {
+            "name": "John Lasseter",
+            "birth_year": "1957",
+            "nationality": "Estadounidense",
+            "image": "JohnLasseter.jpg"
+        },
+        {
+            "name": "Pete Docter",
+            "birth_year": "9 de octubre de 1968",
+            "nationality": "Estadounidense",
+            "image": "petedocter.png"
+        },
+        {
+            "name": "Phil Lord",
+            "birth_year": "12 de julio de 1975",
+            "nationality": "Estadounidense",
+            "image": "PhilLord.png"
+        },
+        {
+            "name": "Pierre Coffin",
+            "birth_year": "1 de noviembre de 1967",
+            "nationality": "Francés",
+            "image": "pierrecoffin.jpeg"
+        },
+        {
+            "name": "Rob Minkoff",
+            "birth_year": "11 de agosto de 1962",
+            "nationality": "Estadounidense",
+            "image": "RobMinkoff.jpg"
+        },
+        {
+            "name": "Ron Clements",
+            "birth_year": "25 de abril de 1953",
+            "nationality": "Estadounidense",
+            "image": "RonClements.jpg"
+        }
+    ]);
+    let directorIds = directorIdsAux.insertedIds;
+    console.log(JSON.stringify(directorIds));
+    db.study.drop();
+    let studyIdsAux = await db.study.insertMany([{
+            "name": "21st Century Fox",
+            "image": "21stCenturyFox.jpg"
+        },
+        {
+            "name": "Walt Disney Pictures",
+            "image": "Disney.jpg"
+        },
+        {
+            "name": "DreamWorks",
+            "image": "DreamWorks.jpg"
+        },
+        {
+            "name": "Pixar Animation Studios",
+            "image": "Pixar.jpg"
+        },
+        {
+            "name": "Sony Pictures Home Entertainment",
+            "image": "SonyPictures.jpg"
+        },
+        {
+            "name": "Universal Pictures",
+            "image": "UniversalPictures.jpeg"
+        },
+        {
+            "name": "Walt Disney Animation Studios",
+            "image": "WaltDisneyAnimationStudios.jpg"
+        }
+    ]);
+    let studyIds = studyIdsAux.insertedIds;
+    console.log(JSON.stringify(studyIds));
+    db.movie.drop();
+    db.movie.insertMany([{
+            "name": "Bichos - Una aventura en miniatura",
+            "directorId": directorIds[4-1],
+            "studies": [studyIds[2-1], studyIds[4-1]],
+            "image": "bichos.jpeg"
+        },
+        {
+            "name": "Lluvia de hamburguesas",
+            "directorId": directorIds[6-1],
+            "studies": [studyIds[5-1]],
+            "image": "CloudyWithAchanceOfMeatballs.jpg"
+        },
+        {
+            "name": "Kung Fu Panda 2",
+            "directorId": directorIds[3-1],
+            "studies": [studyIds[1-1], studyIds[3-1]],
+            "image": "Kung_fu_panda.jpeg"
+        },
+        {
+            "name": "Luca",
+            "directorId": directorIds[2-1],
+            "studies": [studyIds[2-1], studyIds[4-1]],
+            "image": "Luca.jpg"
+        },
+        {
+            "name": "Los Minios",
+            "directorId": directorIds[7-1],
+            "studies": [studyIds[6-1]],
+            "image": "minions.jpeg"
+        },
+        {
+            "name": "Moana",
+            "directorId": directorIds[9-1],
+            "studies": [studyIds[2-1], studyIds[7-1]],
+            "image": "Moana.jpg"
+        },
+        {
+            "name": "Monsters Inc",
+            "directorId": directorIds[5-1],
+            "studies": [studyIds[2-1], studyIds[4-1]],
+            "image": "monstersinc.webp"
+        },
+        {
+            "name": "Señor Peabody y Sherman",
+            "directorId": directorIds[8-1],
+            "studies": [studyIds[1-1], studyIds[3-1]],
+            "image": "PeabodyAndSherman.jpg"
+        },
+        {
+            "name": "Ratatouille",
+            "directorId": directorIds[1-1],
+            "studies": [studyIds[2-1], studyIds[4-1]],
+            "image": "Ratatouille.jpeg"
+        },
+        {
+            "name": "Los increíbles",
+            "directorId": directorIds[1-1],
+            "studies": [studyIds[2-1], studyIds[4-1]],
+            "image": "TheIncredibles.jpg"
+        },
+        {
+            "name": "Toy Story",
+            "directorId": directorIds[4-1],
+            "studies": [studyIds[2-1], studyIds[4-1]],
+            "image": "ToyStory.jpg"
+        },
+        {
+            "name": "UP - una aventura de altura",
+            "directorId": directorIds[5-1],
+            "studies": [studyIds[2-1], studyIds[4-1]],
+            "image": "Up.jpeg"
+        }
+    ]);
+}
+
+inserts();

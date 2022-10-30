@@ -14,7 +14,7 @@
         </template>
         <template #cell(name_id)="data">
           <router-link class="button button-primary" :to="'/movie/show/' + data.item._id">
-            {{data.item.name}}
+            {{ data.item.name }}
           </router-link>
         </template>
       </b-table>
@@ -41,77 +41,78 @@
   </b-card>
 </template>
 <script lang="ts">
-  import { defineComponent } from 'vue';
-  import { Filter } from '../../entity/filter';
-  import { MovieService } from '../../service/movieService';
-  import { StudyService } from '../../service/studyService';
-  import { Movie } from '../../entity/movie';
-  import { Study } from '../../entity/study';
-  import { useRoute } from 'vue-router';
-  import Swal from 'sweetalert2';
-  import { ENTITY, swal, detailImage, tableImage, loadImage } from '../../entity/utils';
-  
-  const TABLE_HEADER_MOVIE = [
-    new Filter("image", ""),
-    new Filter("name_id", "Películas")
-  ];
-  
-  export default defineComponent({
-    props: ['edit', 'title'],
-    data() {
-      return {
-        detailImage,
-        entity: new Study(),
-        movieService: new MovieService(),
-        studyService: new StudyService(),
-        ENTITY,
-        tableImage,
-        TABLE_HEADER_MOVIE,
-        movies: new Array<Movie>(),
-      };
+import { defineComponent } from 'vue';
+import { Filter } from '../../entity/filter';
+import { MovieService } from '../../service/movieService';
+import { StudyService } from '../../service/studyService';
+import { Movie } from '../../entity/movie';
+import { Study } from '../../entity/study';
+import { useRoute } from 'vue-router';
+import Swal from 'sweetalert2';
+import { ENTITY, swal, detailImage, tableImage, loadImage } from '../../entity/utils';
+import { ObjectId } from 'mongodb';
+
+const TABLE_HEADER_MOVIE = [
+  new Filter("image", ""),
+  new Filter("name_id", "Películas")
+];
+
+export default defineComponent({
+  props: ['edit', 'title'],
+  data() {
+    return {
+      detailImage,
+      entity: new Study(),
+      movieService: new MovieService(),
+      studyService: new StudyService(),
+      ENTITY,
+      tableImage,
+      TABLE_HEADER_MOVIE,
+      movies: new Array<Movie>(),
+    };
+  },
+  created() {
+    const params: any = useRoute().params;
+    this.findDirector(params._id);
+  },
+  methods: {
+    loadImage: (n: string, e: string) => loadImage(n, e, useRoute()),
+    findMovies(_id: ObjectId): void {
+      if (_id !== undefined) {
+        this.studyService.listMovies(_id)
+          .then(result => this.movies = result)
+          .catch(err => Swal.fire(swal(err)));
+      } else {
+        this.movies = [];
+      }
     },
-    created() {
-      const params: any = useRoute().params;
-      this.findDirector(params._id);
-    },
-    methods: {
-      loadImage: (n: string, e: string) => loadImage(n, e, useRoute()),
-      findMovies(_ids: Array<number>): void {
-        if (_ids !== undefined) {
-          this.studyService.listMovies(_ids)
-            .then(result => this.movies = result)
-            .catch(err => Swal.fire(swal(err)));
-        } else {
-          this.movies = [];
-        }
-      },
-      findDirector(_id: number) {
-        if (_id === undefined) {
-          this.entity = new Study();
-          this.movies = [];
-        } else {
-          this.studyService.find(_id)
-            .then(result => {
-              this.entity = result;
-              this.findMovies(result.movies);
-            })
+    findDirector(_id: ObjectId) {
+      if (_id === undefined) {
+        this.entity = new Study();
+        this.movies = [];
+      } else {
+        this.findMovies(_id);
+        this.studyService.find(_id)
+          .then(result => {
+            this.entity = result;
+          })
           .catch(err => Swal.fire(swal(err)).then(r => this.cancelEntity()));
-        }
-      },
-      cancelEntity() {
-        this.$router.push('/study');
-      },
-      saveEntity(): void {
-        if (this.entity._id === undefined) {
-          this.studyService.insert(this.entity)
-            .then(message => Swal.fire(swal(message)).then(r => this.cancelEntity()))
-            .catch(err => Swal.fire(swal(err)));
-        } else {
-          this.studyService.update(this.entity)
-            .then(message => Swal.fire(swal(message)).then(r => this.cancelEntity()))
-            .catch(err => Swal.fire(swal(err)));
-        }
-      },
-    }
-  });
-  </script>
+      }
+    },
+    cancelEntity() {
+      this.$router.push('/study');
+    },
+    saveEntity(): void {
+      if (this.entity._id === undefined) {
+        this.studyService.insert(this.entity)
+          .then(message => Swal.fire(swal(message)).then(r => this.cancelEntity()))
+          .catch(err => Swal.fire(swal(err)));
+      } else {
+        this.studyService.update(this.entity)
+          .then(message => Swal.fire(swal(message)).then(r => this.cancelEntity()))
+          .catch(err => Swal.fire(swal(err)));
+      }
+    },
+  }
+});
+</script>

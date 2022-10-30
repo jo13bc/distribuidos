@@ -1,15 +1,16 @@
+import { ObjectId } from "mongodb";
 import { Entity } from "./entity";
 
 export class Movie extends Entity {
   name?: string;
-  directorId?: number;
-  studies: Array<number>;
+  directorId?: ObjectId;
+  studies: Array<ObjectId>;
 
   constructor(
-    _id: string | undefined = undefined,
+    _id: ObjectId | undefined = undefined,
     name: string | undefined = undefined,
-    directorId: number | undefined = undefined,
-    studies: Array<number> = new Array<number>(),
+    directorId: ObjectId | undefined = undefined,
+    studies: Array<ObjectId> = new Array<ObjectId>(),
     image: string | undefined = 'default.png'
   ) {
     super(_id, image);

@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongodb';
 import { Response } from './response';
 
 export const ACTION = {
@@ -34,20 +35,27 @@ export const ENTITY = {
 const SWALTYPE = {
   err: { type: "error", title: "Mensaje de Error" },
   succ: { type: "success", title: "Mensaje de Información" },
-  warn: { type: "waring", title: "Mensaje de Advertencia" },
+  warn: { type: "warning", title: "Mensaje de Advertencia" },
 };
 
-export function swal(response: Response<any>) {
+export function swal(response: Response<any>): any {
   let type: any = SWALTYPE.succ;
-  switch (response.status) {
-    case 404: {
-      type = SWALTYPE.err;
-    }
+  if (response.status == 0) {
+    type = SWALTYPE.warn;
+  } else if (!response.status || response.status >= 400) {
+    type = SWALTYPE.err;
   }
-  return {
+  return type != SWALTYPE.warn ? {
     icon: type.type,
     title: type.title,
     text: response.message,
+  } : {
+    icon: type.type,
+    title: type.title,
+    text: response.message,
+    showDenyButton: true,
+    confirmButtonText: 'Sí',
+    denyButtonText: 'No',
   };
 }
 
@@ -59,7 +67,7 @@ export function loadImage(name: string, entity: string, route: any) {
 export function loadEntity(
   action: string,
   entity: string,
-  _id: string | undefined = undefined
+  _id: ObjectId | undefined = undefined
 ): string {
   if (_id === undefined) return `/${entity}/new`;
   return `/${entity}/${action === ACTION.update ? "edit" : "show"}/${_id}`;

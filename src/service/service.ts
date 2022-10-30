@@ -1,3 +1,4 @@
+import { ObjectId } from "mongodb";
 import { Entity } from "../entity/entity";
 import { Response } from "src/entity/response";
 
@@ -27,7 +28,7 @@ export class Service<E extends Entity> {
     }).then((response) => response.json());
   }
 
-  async delete(_id: string): Promise<any> {
+  async delete(_id: ObjectId): Promise<any> {
     return await fetch(`/.netlify/functions/${this.entity_name}/${_id}`, {
       headers: { "Content-Type": "application/json" },
       method: "DELETE",
@@ -36,7 +37,7 @@ export class Service<E extends Entity> {
     }).then((response) => response.json());
   }
 
-  async find(_id: string): Promise<E> {
+  async find(_id: ObjectId): Promise<E> {
     return new Promise<E>((resolve, reject) => {
       fetch(`/.netlify/functions/${this.entity_name}/${_id}`, {
         headers: { "Content-Type": "application/json" },

@@ -33,7 +33,7 @@
             <template #cell(image)="data">
               <b-img rounded="circle" v-bind="tableImage" v-bind:src="loadImage(data.value, ENTITY.study.name)" />
             </template>
-            <template #cell(nameid)="data">
+            <template #cell(name_id)="data">
               <router-link class="button button-primary" :to="'/study/show/' + data.item._id">
                 {{ data.item.name }}
               </router-link>
@@ -76,15 +76,16 @@ import { Study } from '../../entity/study';
 import { useRoute } from 'vue-router';
 import Swal from 'sweetalert2';
 import { ACTION, ENTITY, swal, detailImage, tableImage, loadImage } from '../../entity/utils';
+import { ObjectId } from 'mongodb';
 
 const TABLE_HEADER_DIRECTOR = [
   new Filter("image", ""),
-  new Filter("nameid", "Director")
+  new Filter("name_id", "Director")
 ];
 
 const TABLE_HEADER_STUDY = [
   new Filter("image", ""),
-  new Filter("nameid", "Estudios")
+  new Filter("name_id", "Estudios")
 ];
 
 export default defineComponent({
@@ -109,8 +110,10 @@ export default defineComponent({
   created() {
     const params: any = useRoute().params;
     this.findMovie(params._id);
-    this.listDirector();
-    this.listStudy();
+    if (this.edit) {
+      this.listDirector();
+      this.listStudy();
+    }
   },
   methods: {
     loadImage: (n: string, e: string) => loadImage(n, e, useRoute()),
@@ -124,7 +127,7 @@ export default defineComponent({
         .then(result => this.studiesSelect = result.map(e => new Select(e.name, e._id)))
         .catch(err => Swal.fire(swal(err)));
     },
-    findDirector(_id: number | undefined): void {
+    findDirector(_id: ObjectId | undefined): void {
       if (_id !== undefined) {
         this.directorService.find(_id)
           .then(result => this.directores = [result])
@@ -133,7 +136,7 @@ export default defineComponent({
         this.directores = [];
       }
     },
-    findStudies(_id: number): void {
+    findStudies(_id: ObjectId): void {
       if (_id !== undefined) {
         this.movieService.listStydies(_id)
           .then(result => this.studies = result)
@@ -142,16 +145,18 @@ export default defineComponent({
         this.studies = [];
       }
     },
-    findMovie(_id: number) {
+    findMovie(_id: ObjectId) {
       if (_id === undefined) {
         this.entity = new Movie();
       } else {
+        if (!this.edit) {
+          this.findStudies(_id);
+        }
         this.movieService.find(_id)
           .then(result => {
             this.entity = result;
             if (!this.edit) {
               this.findDirector(result.directorId);
-              this.findStudies(_id);
             }
           })
           .catch(err => Swal.fire(swal(err)).then(r => this.cancelEntity()));

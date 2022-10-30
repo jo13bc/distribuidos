@@ -7,7 +7,7 @@
       </template>
       <template #cell(name_id)="data">
         <b-link @click="loadEntity(ACTION.detail, data.item._id)">
-          {{data.item.name}}
+          {{ data.item.name }}
         </b-link>
       </template>
       <template #cell(_id)="data">
@@ -26,10 +26,12 @@
 import { defineComponent } from 'vue';
 import { Filter } from '../../entity/filter';
 import { Study } from '../../entity/study';
+import { Response } from '../../entity/response';
 import { StudyService } from '../../service/studyService';
 import Swal from 'sweetalert2';
 import { ACTION, ENTITY, swal, tableImage, loadImage, loadEntity } from '../../entity/utils';
 import { useRoute } from 'vue-router';
+import { ObjectId } from 'mongodb';
 
 const TABLE_HEADER = [
   new Filter("image", "Fotografía"),
@@ -53,7 +55,7 @@ export default defineComponent({
   },
   methods: {
     loadImage: (n: string) => loadImage(n, ENTITY.study.name, useRoute()),
-    loadEntity(a: string, i: number | undefined = undefined) {
+    loadEntity(a: string, i: ObjectId | undefined = undefined) {
       this.$router.push(loadEntity(a, ENTITY.study.name, i))
     },
     allEntities(): void {
@@ -61,11 +63,16 @@ export default defineComponent({
         .then(result => this.entities = result)
         .catch(err => Swal.fire(swal(err)));
     },
-    deleteEntity(_id: any): void {
-      this.service.delete(_id)
-        .then(message => Swal.fire(swal(message)))
-        .catch(err => Swal.fire(swal(err)))
-        .finally(this.allEntities);
+    deleteEntity(_id: ObjectId): void {
+      let swalAux = swal(new Response<any>(0, "¿Está seguro que desea eliminar el estudio?"));
+      Swal.fire(swalAux).then((result) => {
+        if (result.isConfirmed) {
+          this.service.delete(_id)
+            .then(message => Swal.fire(swal(message)))
+            .catch(err => Swal.fire(swal(err)))
+            .finally(this.allEntities);
+        }
+      });
     }
   }
 });

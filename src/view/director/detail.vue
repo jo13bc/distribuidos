@@ -20,7 +20,7 @@
         </template>
         <template #cell(name_id)="data">
           <router-link class="button button-primary" :to="'/movie/show/' + data.item._id">
-            {{data.item.name}}
+            {{ data.item.name }}
           </router-link>
         </template>
       </b-table>
@@ -56,6 +56,7 @@ import { Director } from '../../entity/director';
 import { useRoute } from 'vue-router';
 import Swal from 'sweetalert2';
 import { ENTITY, swal, detailImage, tableImage, loadImage } from '../../entity/utils';
+import { ObjectId } from 'mongodb';
 
 const TABLE_HEADER_MOVIE = [
   new Filter("image", ""),
@@ -82,7 +83,7 @@ export default defineComponent({
   },
   methods: {
     loadImage: (n: string, e: string) => loadImage(n, e, useRoute()),
-    findMovies(_id: number): void {
+    findMovies(_id: ObjectId): void {
       if (_id !== undefined) {
         this.directorService.listMovies(_id)
           .then(result => this.movies = result)
@@ -91,15 +92,15 @@ export default defineComponent({
         this.movies = [];
       }
     },
-    findDirector(_id: number) {
+    findDirector(_id: ObjectId) {
       if (_id === undefined) {
         this.entity = new Director();
         this.movies = [];
       } else {
+        this.findMovies(_id);
         this.directorService.find(_id)
           .then(result => {
             this.entity = result;
-            this.findMovies(_id);
           }).catch(err => Swal.fire(swal(err)).then(r => this.cancelEntity()));
       }
     },

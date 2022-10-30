@@ -1,5 +1,5 @@
 'use strict';
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 const express = require('express');
 const serverless = require('serverless-http');
 const bodyParser = require('body-parser');
@@ -41,13 +41,13 @@ app.get('/', async (req, res) => {
     })
 });
 app.get('/:_id', (req, res) => {
-    let _id = req.params._id
-    if (!_id || _id === '-1') {
+    let _id = req.params._id;
+    if (!_id) {
         res.status(404).json(error('Identificador inválido'));
         return;
     }
     db(conexion =>
-        conexion.findOne({ _id })
+        conexion.findOne({ _id: new ObjectId(_id) })
     ).then(movie => {
         if (movie) res.status(200).json(success(movie));
         else res.status(404).json(error('No existe el director'));
@@ -66,12 +66,13 @@ app.post('/', (req, res) => {
 });
 app.put('/:_id', (req, res) => {
     let _id = req.params._id
-    if (!_id || _id === '-1') {
+    if (!_id) {
         res.status(404).json(error('Identificador inválido'));
         return;
     }
+    req.body._id = new ObjectId(_id);
     db(conexion =>
-        conexion.updateOne({ _id }, { $set: req.body })
+        conexion.updateOne({ _id: new ObjectId(_id) }, { $set: req.body })
     ).then(director => {
         res.status(200).json(success(director, 'El director fue actualizado exitosamente'));
     }).catch(err => {
@@ -80,12 +81,12 @@ app.put('/:_id', (req, res) => {
 });
 app.delete('/:_id', (req, res) => {
     let _id = req.params._id
-    if (!_id || _id === '-1') {
+    if (!_id) {
         res.status(404).json(error('Identificador inválido'));
         return;
     }
     db(conexion =>
-        conexion.deleteOne({ _id })
+        conexion.deleteOne({ _id: new ObjectId(_id) })
     ).then(director => {
         res.status(200).json(success(director, 'El director fue eliminado exitosamente'));
     }).catch(err => {

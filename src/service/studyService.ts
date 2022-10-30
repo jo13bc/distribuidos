@@ -2,13 +2,14 @@ import { Movie } from "src/entity/movie";
 import { Study } from "src/entity/study";
 import { Service } from "./service";
 import { Response } from "src/entity/response";
+import { ObjectId } from "mongodb";
 
 export class StudyService extends Service<Study> {
   constructor() {
     super("study");
   }
 
-  async listMovies(_id: string): Promise<Array<Movie>> {
+  async listMovies(_id: ObjectId): Promise<Array<Movie>> {
     return new Promise<Array<Movie>>((resolve, reject) => {
       fetch(
         `/.netlify/functions/movie/byStudy/${_id}`, {
