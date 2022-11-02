@@ -1,24 +1,23 @@
-import { Movie } from "src/entity/movie";
-import { Study } from "src/entity/study";
+import { Playlist } from "src/entity/playlist";
+import { Song } from "src/entity/song";
 import { Service } from "./service";
 import { Response } from "src/entity/response";
 import { ObjectId } from "mongodb";
 
-export class StudyService extends Service<Study> {
+export class PlaylistService extends Service<Playlist> {
   constructor() {
-    super("study");
+    super("playlist");
   }
 
-  async listMovies(_id: ObjectId): Promise<Array<Movie>> {
-    return new Promise<Array<Movie>>((resolve, reject) => {
-      fetch(
-        `/.netlify/functions/movie/byStudy/${_id}`, {
+  async listSong(_id: ObjectId): Promise<Song[]> {
+    return new Promise<Song[]>((resolve, reject) => {
+      fetch(`/.netlify/functions/song/byPlaylist/${_id}`, {
         headers: { "Content-Type": "application/json" },
         method: "GET",
         mode: "cors",
         credentials: "same-origin",
       }).then((response) => response.json())
-        .then((response: Response<Array<Movie>>) => {
+        .then((response: Response<Song[]>) => {
           if (response.status === 200) {
             resolve(response.body);
           } else {

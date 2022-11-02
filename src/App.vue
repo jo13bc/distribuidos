@@ -1,10 +1,10 @@
 <template>
     <main>
         <Header />
-        <b-container id="container" :toast="{root: true}" class="mt-5 mb-5" fluid="sm">
+        <b-container id="container" :toast="{root: true}" class="mt-5 mb-5" fluid>
             <router-view />
         </b-container>
-        <Footer />
+        <Footer v-bind:isLoading="true" />
     </main>
 </template>
 

@@ -1,168 +1,171 @@
-use('store');
+use('library');
 
 async function inserts(){
-    db.director.drop();
-    let directorIdsAux = await db.director.insertMany([{
-            "name": "Brad Bird",
-            "birth_year": "24 de septiembre de 1957",
-            "nationality": "Estadounidense",
-            "image": "BradBird.jpg"
+    db.playlist.drop();
+    let playlistIdsAux = await db.playlist.insertMany([{
+            "name": "Triste",
+            "image": "sad.jpg"
         },
         {
-            "name": "Erico Casarosa",
-            "birth_year": "19 de octubre de 1971",
-            "nationality": "Italiano",
-            "image": "EnricoCasarosa.jpg"
+            "name": "Fiesta",
+            "image": "party.jpg"
         },
         {
-            "name": "Jennifer Yuh Nelson",
-            "birth_year": "1972",
-            "nationality": "Sur Coreana",
-            "image": "Jennifer_Yuh_Nelson.jpg"
+            "name": "Bailable",
+            "image": "dance.jpg"
         },
         {
-            "name": "John Lasseter",
-            "birth_year": "1957",
-            "nationality": "Estadounidense",
-            "image": "JohnLasseter.jpg"
-        },
-        {
-            "name": "Pete Docter",
-            "birth_year": "9 de octubre de 1968",
-            "nationality": "Estadounidense",
-            "image": "petedocter.png"
-        },
-        {
-            "name": "Phil Lord",
-            "birth_year": "12 de julio de 1975",
-            "nationality": "Estadounidense",
-            "image": "PhilLord.png"
-        },
-        {
-            "name": "Pierre Coffin",
-            "birth_year": "1 de noviembre de 1967",
-            "nationality": "Francés",
-            "image": "pierrecoffin.jpeg"
-        },
-        {
-            "name": "Rob Minkoff",
-            "birth_year": "11 de agosto de 1962",
-            "nationality": "Estadounidense",
-            "image": "RobMinkoff.jpg"
-        },
-        {
-            "name": "Ron Clements",
-            "birth_year": "25 de abril de 1953",
-            "nationality": "Estadounidense",
-            "image": "RonClements.jpg"
+            "name": "Karaoke",
+            "image": "sing.jpg"
         }
     ]);
-    let directorIds = directorIdsAux.insertedIds;
-    console.log(JSON.stringify(directorIds));
-    db.study.drop();
-    let studyIdsAux = await db.study.insertMany([{
-            "name": "21st Century Fox",
-            "image": "21stCenturyFox.jpg"
+    let playlistIds = playlistIdsAux.insertedIds;
+    console.log(JSON.stringify(playlistIds));
+    db.song.drop();
+    db.song.insertMany([
+        //SAD
+        {
+            "playlist": playlistIds[0],
+            "name": "Only Love Can Hurt Like This",
+            "author": "Paloma Faith",
+            "album": "A Perfect Contradiction",
+            "image": "only_love.jpg"
         },
         {
-            "name": "Walt Disney Pictures",
-            "image": "Disney.jpg"
+            "playlist": playlistIds[0],
+            "name": "Running Up That Hill",
+            "author": "Kate Bush",
+            "album": "Hounds Of Love",
+            "image": "running_up.jpg"
         },
         {
-            "name": "DreamWorks",
-            "image": "DreamWorks.jpg"
+            "playlist": playlistIds[0],
+            "name": "Memories",
+            "author": "Conan Gray",
+            "album": "Superache",
+            "image": "running_up.jpg"
         },
         {
-            "name": "Pixar Animation Studios",
-            "image": "Pixar.jpg"
+            "playlist": playlistIds[0],
+            "name": "TV",
+            "author": "Billie Eilish",
+            "album": "Guitar Songs",
+            "image": "running_up.jpg"
         },
         {
-            "name": "Sony Pictures Home Entertainment",
-            "image": "SonyPictures.jpg"
+            "playlist": playlistIds[0],
+            "name": "Before You Go",
+            "author": "Lewis Capaldi",
+            "album": "Divinaly Uninspired To A Hellish Extent",
+            "image": "running_up.jpg"
+        },
+        //PARTY
+        {
+            "playlist": playlistIds[1],
+            "name": "Provenza",
+            "author": "Karol G",
+            "album": "Provenza",
+            "image": "running_up.jpg"
         },
         {
-            "name": "Universal Pictures",
-            "image": "UniversalPictures.jpeg"
+            "playlist": playlistIds[1],
+            "name": "Ojos bonitos",
+            "author": "Bad Bunny y Bomba Estéreo",
+            "album": "Un verano sin ti",
+            "image": "running_up.jpg"
         },
         {
-            "name": "Walt Disney Animation Studios",
-            "image": "WaltDisneyAnimationStudios.jpg"
-        }
-    ]);
-    let studyIds = studyIdsAux.insertedIds;
-    console.log(JSON.stringify(studyIds));
-    db.movie.drop();
-    db.movie.insertMany([{
-            "name": "Bichos - Una aventura en miniatura",
-            "directorId": directorIds[4-1],
-            "studies": [studyIds[2-1], studyIds[4-1]],
-            "image": "bichos.jpeg"
+            "playlist": playlistIds[1],
+            "name": "Fuera del Mercado",
+            "author": "Danny Ocean",
+            "album": "@Dannocen",
+            "image": "running_up.jpg"
         },
         {
-            "name": "Lluvia de hamburguesas",
-            "directorId": directorIds[6-1],
-            "studies": [studyIds[5-1]],
-            "image": "CloudyWithAchanceOfMeatballs.jpg"
+            "playlist": playlistIds[1],
+            "name": "Envolver",
+            "author": "Anitta",
+            "album": "Envolver",
+            "image": "running_up.jpg"
         },
         {
-            "name": "Kung Fu Panda 2",
-            "directorId": directorIds[3-1],
-            "studies": [studyIds[1-1], studyIds[3-1]],
-            "image": "Kung_fu_panda.jpeg"
+            "playlist": playlistIds[1],
+            "name": "Party",
+            "author": "Bad Bunny y Rauw Alejandro",
+            "album": "Un verano sin ti",
+            "image": "running_up.jpg"
+        },
+        //DANCE
+        {
+            "playlist": playlistIds[2],
+            "name": "La Bachata",
+            "author": "Manuel Turizo",
+            "album": "La Bachata",
+            "image": "running_up.jpg"
         },
         {
-            "name": "Luca",
-            "directorId": directorIds[2-1],
-            "studies": [studyIds[2-1], studyIds[4-1]],
-            "image": "Luca.jpg"
+            "playlist": playlistIds[2],
+            "name": "Monotonía",
+            "author": "Shakira y Ozuna",
+            "album": "Monotonía",
+            "image": "running_up.jpg"
         },
         {
-            "name": "Los Minios",
-            "directorId": directorIds[7-1],
-            "studies": [studyIds[6-1]],
-            "image": "minions.jpeg"
+            "playlist": playlistIds[2],
+            "name": "Me Tengo Que Ir",
+            "author": "Adolescent's Orquesta",
+            "album": "Rumba Latina",
+            "image": "running_up.jpg"
         },
         {
-            "name": "Moana",
-            "directorId": directorIds[9-1],
-            "studies": [studyIds[2-1], studyIds[7-1]],
-            "image": "Moana.jpg"
+            "playlist": playlistIds[2],
+            "name": "Procura",
+            "author": "ChiChi Peralta y Jandy Feliz",
+            "album": "Pa' Otro La 'O",
+            "image": "running_up.jpg"
         },
         {
-            "name": "Monsters Inc",
-            "directorId": directorIds[5-1],
-            "studies": [studyIds[2-1], studyIds[4-1]],
-            "image": "monstersinc.webp"
+            "playlist": playlistIds[2],
+            "name": "Amores Como el Nuestro",
+            "author": "Jerry Rivera",
+            "album": "No me olvidarás",
+            "image": "running_up.jpg"
+        },
+        //SING
+        {
+            "playlist": playlistIds[3],
+            "name": "Rayando el Sol",
+            "author": "Maná",
+            "album": "Falta amor",
+            "image": "running_up.jpg"
         },
         {
-            "name": "Señor Peabody y Sherman",
-            "directorId": directorIds[8-1],
-            "studies": [studyIds[1-1], studyIds[3-1]],
-            "image": "PeabodyAndSherman.jpg"
+            "playlist": playlistIds[3],
+            "name": "Soledad",
+            "author": "Maná",
+            "album": "Falta amor",
+            "image": "running_up.jpg"
         },
         {
-            "name": "Ratatouille",
-            "directorId": directorIds[1-1],
-            "studies": [studyIds[2-1], studyIds[4-1]],
-            "image": "Ratatouille.jpeg"
+            "playlist": playlistIds[3],
+            "name": "¡Corre!",
+            "author": "Jesse y Joy",
+            "album": "¿Con quién se queda el perro?",
+            "image": "running_up.jpg"
         },
         {
-            "name": "Los increíbles",
-            "directorId": directorIds[1-1],
-            "studies": [studyIds[2-1], studyIds[4-1]],
-            "image": "TheIncredibles.jpg"
+            "playlist": playlistIds[3],
+            "name": "Me Dediqué a Perderte",
+            "author": "Alejandro Fernández",
+            "album": "A corazón abierto",
+            "image": "running_up.jpg"
         },
         {
-            "name": "Toy Story",
-            "directorId": directorIds[4-1],
-            "studies": [studyIds[2-1], studyIds[4-1]],
-            "image": "ToyStory.jpg"
-        },
-        {
-            "name": "UP - una aventura de altura",
-            "directorId": directorIds[5-1],
-            "studies": [studyIds[2-1], studyIds[4-1]],
-            "image": "Up.jpeg"
+            "playlist": playlistIds[3],
+            "name": "Mientes Tan Bien",
+            "author": "Sin Bandera",
+            "album": "De viaje",
+            "image": "running_up.jpg"
         }
     ]);
 }

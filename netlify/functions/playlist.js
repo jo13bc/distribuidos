@@ -6,8 +6,8 @@ const bodyParser = require('body-parser');
 const exp = express();
 
 const app = express.Router();
-const nameDB = "store";
-const nameColle = "director";
+const nameDB = "library";
+const nameColle = "playlist";
 const client = new MongoClient(
     `${process.env.MONGODB_URI.replace('"', '')}`, { useNewUrlParser: true, useUnifiedTopology: true }
 );
@@ -34,8 +34,8 @@ function error(message) {
 app.get('/', async (req, res) => {
     db(conexion =>
         conexion.find({}).toArray()
-    ).then(movies => {
-        res.status(200).json(success(movies));
+    ).then(entities => {
+        res.status(200).json(success(entities));
     }).catch(err => {
         res.status(404).json(error(`${err}`));
     })
@@ -50,7 +50,7 @@ app.get('/:_id', (req, res) => {
         conexion.findOne({ _id: new ObjectId(_id) })
     ).then(movie => {
         if (movie) res.status(200).json(success(movie));
-        else res.status(404).json(error('No existe el director'));
+        else res.status(404).json(error('No existe la lista de reproducción'));
     }).catch(err => {
         res.status(404).json(error(`${err}`));
     });
@@ -59,7 +59,7 @@ app.post('/', (req, res) => {
     db(conexion =>
         conexion.insertOne(req.body)
     ).then(director => {
-        res.status(200).json(success(director, 'El director fue insertado exitosamente'));
+        res.status(200).json(success(director, 'La lista de reproducción fue insertada exitosamente'));
     }).catch(err => {
         res.status(404).json(error(`${err}`));
     });
@@ -74,7 +74,7 @@ app.put('/:_id', (req, res) => {
     db(conexion =>
         conexion.updateOne({ _id: new ObjectId(_id) }, { $set: req.body })
     ).then(director => {
-        res.status(200).json(success(director, 'El director fue actualizado exitosamente'));
+        res.status(200).json(success(director, 'La lista de reproducción fue actualizada exitosamente'));
     }).catch(err => {
         res.status(404).json(error(`${err}`));
     });
@@ -88,7 +88,7 @@ app.delete('/:_id', (req, res) => {
     db(conexion =>
         conexion.deleteOne({ _id: new ObjectId(_id) })
     ).then(director => {
-        res.status(200).json(success(director, 'El director fue eliminado exitosamente'));
+        res.status(200).json(success(director, 'La lista de reproducción fue eliminada exitosamente'));
     }).catch(err => {
         res.status(404).json(error(`${err}`));
     });
@@ -96,6 +96,6 @@ app.delete('/:_id', (req, res) => {
 
 
 exp.use(bodyParser.json());
-exp.use('/.netlify/functions/director', app);
+exp.use('/.netlify/functions/playlist', app);
 module.exports = exp;
 module.exports.handler = serverless(exp);
