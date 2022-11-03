@@ -1,9 +1,7 @@
-import { ObjectId } from "mongodb";
-
 export class Entity {
-  _id?: ObjectId;
+  _id?: any;
   image: string;
-  constructor(_id: ObjectId | undefined, image: string) {
+  constructor(_id: any | undefined, image: string) {
     this._id = _id;
     this.image = image;
   }

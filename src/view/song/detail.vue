@@ -29,8 +29,9 @@
             <!--<b-form-file v-model="entity.image" :state="Boolean(entity.image)" placeholder="Seleccione la imagen"
               drop-placeholder="Imagen"></b-form-file>-->
             <b-form-input id="image" v-model="entity.image" trim hidden />
-            <b-embed type="iframe" aspect="16by9" src="https://www.youtube.com/embed/zpOULjyy-n8?rel=0" allowfullscreen>
-            </b-embed>
+            <b-form-group label-for="file">
+              <Player v-bind:songs="[entity]" ref="player" />
+            </b-form-group>
           </b-card-body>
         </b-col>
       </b-row>
@@ -57,18 +58,22 @@
   </b-container>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { useLoading } from 'vue3-loading-overlay';
+import Player from '../../component/Player.vue';
 import { SongService } from '../../service/songService';
 import { Song } from '../../entity/song';
 import Swal from 'sweetalert2'
 import { swal, detailImage, loadImage } from '../../entity/utils';
-import { ObjectId } from 'mongodb';
 
 export default defineComponent({
+  components: {
+    Player
+  },
   setup() {
-    return { loader: useLoading() };
+    const player = ref<InstanceType<typeof Player> | null>(null).value;
+    return { loader: useLoading(), player };
   },
   data() {
     return {
@@ -85,7 +90,7 @@ export default defineComponent({
   },
   methods: {
     loadImage: (n: string) => loadImage(n, 'song', useRoute()),
-    findSong(playlist: ObjectId, _id: any) {
+    findSong(playlist: any, _id: any) {
       if (_id === undefined || _id == -1) {
         this.entity = new Song();
         this.entity.playlist = playlist;
@@ -93,7 +98,7 @@ export default defineComponent({
         this.loader.show();
         this.songService.find(_id)
           .then(result => {
-            this.entity = result;
+            this.entity = Song.clone(result);
             this.loader.hide();
           })
           .catch(err => Swal.fire(swal(err)).then(r => this.cancelEntity()));

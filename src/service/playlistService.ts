@@ -1,15 +1,13 @@
 import { Playlist } from "src/entity/playlist";
 import { Song } from "src/entity/song";
 import { Service } from "./service";
-import { Response } from "src/entity/response";
-import { ObjectId } from "mongodb";
 
 export class PlaylistService extends Service<Playlist> {
   constructor() {
     super("playlist");
   }
 
-  async listSong(_id: ObjectId): Promise<Song[]> {
+  async listSong(_id: any): Promise<Song[]> {
     return new Promise<Song[]>((resolve, reject) => {
       fetch(`/.netlify/functions/song/byPlaylist/${_id}`, {
         headers: { "Content-Type": "application/json" },
@@ -17,7 +15,7 @@ export class PlaylistService extends Service<Playlist> {
         mode: "cors",
         credentials: "same-origin",
       }).then((response) => response.json())
-        .then((response: Response<Song[]>) => {
+        .then(response => {
           if (response.status === 200) {
             resolve(response.body);
           } else {

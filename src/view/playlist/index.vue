@@ -27,7 +27,6 @@ import { PlaylistService } from '../../service/playlistService';
 import Swal from 'sweetalert2';
 import { ACTION, swal, tableImage, loadImage, loadEntity } from '../../entity/utils';
 import { useRoute } from 'vue-router';
-import { ObjectId } from 'mongodb';
 
 const TABLE_HEADER = [
   new Filter("image", "Fotografía"),
@@ -54,7 +53,7 @@ export default defineComponent({
   },
   methods: {
     loadImage: (n: string) => loadImage(n, 'playlist', useRoute()),
-    loadEntity(a: string, i: ObjectId | undefined = undefined) {
+    loadEntity(a: string, i: any | undefined = undefined) {
       this.$router.push(`/playlist/${i ? i : '-1'}`)
     },
     allEntities(): void {
@@ -64,7 +63,7 @@ export default defineComponent({
         .catch(err => Swal.fire(swal(err)))
         .finally(this.loader.hide);
     },
-    deleteEntity(_id: ObjectId): void {
+    deleteEntity(_id: any): void {
       let swalAux = swal(new Response<any>(0, "¿Está seguro que desea eliminar la lista de reproducción?"));
       Swal.fire(swalAux).then((result) => {
         if (result.isConfirmed) {

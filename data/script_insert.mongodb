@@ -1,4 +1,10 @@
+const fs = require('fs');
+
 use('library');
+
+async function readSong(name){
+    return fs.readFileSync(`data/songs/${name}.mp3`);
+}
 
 async function inserts(){
     db.playlist.drop();
@@ -19,8 +25,82 @@ async function inserts(){
             "image": "sing.jpg"
         }
     ]);
+    let songs = await Promise.all([
+        readSong("Paloma Faith - Only Love Can Hurt Like This (Lyrics)"),
+        readSong("Kate Bush - Running Up That Hill (Lyrics) _ Stranger Things 4 Soundtrack"),
+        readSong("Conan Gray - Memories (Lyrics)"),
+        readSong("Billie Eilish - TV  (Lyrics)"),
+        readSong("Lewis Capaldi - Before You Go (Lyrics)")
+    ]);
+    db.file.drop();
+    let fileIdsAux = await db.file.insertMany([
+        //SAD
+        {
+            "file": songs[0]
+        },
+        {
+            "file": songs[1]
+        },
+        {
+            "file": songs[2]
+        },
+        {
+            "file": songs[3]
+        },
+        {
+            "file": songs[4]
+        },
+        //PARTY
+        {
+            "file": undefined
+        },
+        {
+            "file": undefined
+        },
+        {
+            "file": undefined
+        },
+        {
+            "file": undefined
+        },
+        {
+            "file": undefined
+        },
+        //DANCE
+        {
+            "file": undefined
+        },
+        {
+            "file": undefined
+        },
+        {
+            "file": undefined
+        },
+        {
+            "file": undefined
+        },
+        {
+            "file": undefined
+        },
+        //SING
+        {
+            "file": undefined
+        },
+        {
+            "file": undefined
+        },
+        {
+            "file": undefined
+        },
+        {
+            "file": undefined
+        },
+        {
+            "file": undefined
+        }
+    ]);
+    let fileIds = fileIdsAux.insertedIds;
     let playlistIds = playlistIdsAux.insertedIds;
-    console.log(JSON.stringify(playlistIds));
     db.song.drop();
     db.song.insertMany([
         //SAD
@@ -29,35 +109,40 @@ async function inserts(){
             "name": "Only Love Can Hurt Like This",
             "author": "Paloma Faith",
             "album": "A Perfect Contradiction",
-            "image": "only_love.jpg"
+            "image": "only_love.png",
+            "file": fileIds[0]
         },
         {
             "playlist": playlistIds[0],
             "name": "Running Up That Hill",
             "author": "Kate Bush",
             "album": "Hounds Of Love",
-            "image": "running_up.jpg"
+            "image": "running_up.png",
+            "file": fileIds[1]
         },
         {
             "playlist": playlistIds[0],
             "name": "Memories",
             "author": "Conan Gray",
             "album": "Superache",
-            "image": "running_up.jpg"
+            "image": "running_up.png",
+            "file": fileIds[2]
         },
         {
             "playlist": playlistIds[0],
             "name": "TV",
             "author": "Billie Eilish",
             "album": "Guitar Songs",
-            "image": "running_up.jpg"
+            "image": "running_up.png",
+            "file": fileIds[3]
         },
         {
             "playlist": playlistIds[0],
             "name": "Before You Go",
             "author": "Lewis Capaldi",
             "album": "Divinaly Uninspired To A Hellish Extent",
-            "image": "running_up.jpg"
+            "image": "running_up.png",
+            "file": fileIds[4]
         },
         //PARTY
         {
@@ -65,35 +150,40 @@ async function inserts(){
             "name": "Provenza",
             "author": "Karol G",
             "album": "Provenza",
-            "image": "running_up.jpg"
+            "image": "running_up.png",
+            "file": fileIds[5]
         },
         {
             "playlist": playlistIds[1],
             "name": "Ojos bonitos",
             "author": "Bad Bunny y Bomba Estéreo",
             "album": "Un verano sin ti",
-            "image": "running_up.jpg"
+            "image": "running_up.png",
+            "file": fileIds[6]
         },
         {
             "playlist": playlistIds[1],
             "name": "Fuera del Mercado",
             "author": "Danny Ocean",
             "album": "@Dannocen",
-            "image": "running_up.jpg"
+            "image": "running_up.png",
+            "file": fileIds[7]
         },
         {
             "playlist": playlistIds[1],
             "name": "Envolver",
             "author": "Anitta",
             "album": "Envolver",
-            "image": "running_up.jpg"
+            "image": "running_up.png",
+            "file": fileIds[8]
         },
         {
             "playlist": playlistIds[1],
             "name": "Party",
             "author": "Bad Bunny y Rauw Alejandro",
             "album": "Un verano sin ti",
-            "image": "running_up.jpg"
+            "image": "running_up.png",
+            "file": fileIds[9]
         },
         //DANCE
         {
@@ -101,35 +191,40 @@ async function inserts(){
             "name": "La Bachata",
             "author": "Manuel Turizo",
             "album": "La Bachata",
-            "image": "running_up.jpg"
+            "image": "running_up.png",
+            "file": fileIds[10]
         },
         {
             "playlist": playlistIds[2],
             "name": "Monotonía",
             "author": "Shakira y Ozuna",
             "album": "Monotonía",
-            "image": "running_up.jpg"
+            "image": "running_up.png",
+            "file": fileIds[11]
         },
         {
             "playlist": playlistIds[2],
             "name": "Me Tengo Que Ir",
             "author": "Adolescent's Orquesta",
             "album": "Rumba Latina",
-            "image": "running_up.jpg"
+            "image": "running_up.png",
+            "file": fileIds[12]
         },
         {
             "playlist": playlistIds[2],
             "name": "Procura",
             "author": "ChiChi Peralta y Jandy Feliz",
             "album": "Pa' Otro La 'O",
-            "image": "running_up.jpg"
+            "image": "running_up.png",
+            "file": fileIds[13]
         },
         {
             "playlist": playlistIds[2],
             "name": "Amores Como el Nuestro",
             "author": "Jerry Rivera",
             "album": "No me olvidarás",
-            "image": "running_up.jpg"
+            "image": "running_up.png",
+            "file": fileIds[14]
         },
         //SING
         {
@@ -137,35 +232,40 @@ async function inserts(){
             "name": "Rayando el Sol",
             "author": "Maná",
             "album": "Falta amor",
-            "image": "running_up.jpg"
+            "image": "running_up.png",
+            "file": fileIds[15]
         },
         {
             "playlist": playlistIds[3],
             "name": "Soledad",
             "author": "Maná",
             "album": "Falta amor",
-            "image": "running_up.jpg"
+            "image": "running_up.png",
+            "file": fileIds[16]
         },
         {
             "playlist": playlistIds[3],
             "name": "¡Corre!",
             "author": "Jesse y Joy",
             "album": "¿Con quién se queda el perro?",
-            "image": "running_up.jpg"
+            "image": "running_up.png",
+            "file": fileIds[17]
         },
         {
             "playlist": playlistIds[3],
             "name": "Me Dediqué a Perderte",
             "author": "Alejandro Fernández",
             "album": "A corazón abierto",
-            "image": "running_up.jpg"
+            "image": "running_up.png",
+            "file": fileIds[18]
         },
         {
             "playlist": playlistIds[3],
             "name": "Mientes Tan Bien",
             "author": "Sin Bandera",
             "album": "De viaje",
-            "image": "running_up.jpg"
+            "image": "running_up.png",
+            "file": fileIds[19]
         }
     ]);
 }

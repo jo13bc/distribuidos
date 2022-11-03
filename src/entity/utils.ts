@@ -1,4 +1,3 @@
-import { ObjectId } from 'mongodb';
 import { Response } from './response';
 
 export const ACTION = {
@@ -43,7 +42,7 @@ export function loadImage(name: string, entity: string, route: any) {
 export function loadEntity(
   action: string,
   entity: string,
-  _id: ObjectId | undefined = undefined
+  _id: any | undefined = undefined
 ): string {
   if (_id === undefined) return `/${entity}/new`;
   return `/${entity}/${action === ACTION.update ? "edit" : "show"}/${_id}`;

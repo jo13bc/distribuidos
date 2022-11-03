@@ -42,11 +42,8 @@
                     <b-list-group-item v-for="song of entities">
                         <div class="d-flex justify-content-between">
                             <div class="d-flex justify-content-start w-100">
-                                <b-button variant="link" @click="player?.play(song._id)" v-if="!song.isPlay">
+                                <b-button variant="link" @click="player?.play(song._id)">
                                     <fa-icon icon="fa-solid fa-play-circle" size="xl" />
-                                </b-button>
-                                <b-button variant="link" @click="player?.stop(song._id)" v-else>
-                                    <fa-icon icon="fa-solid fa-stop-circle" size="xl" />
                                 </b-button>
                                 <router-link class="d-flex flex-column w-100"
                                     :to="'/song/' + playlist._id + '/' + song._id">
@@ -80,7 +77,6 @@ import { SongService } from '../../service/songService';
 import { Song } from '../../entity/song';
 import Swal from 'sweetalert2'
 import { swal, ACTION, detailImage, tableImage, loadImage, loadEntity } from '../../entity/utils';
-import { ObjectId } from 'mongodb';
 import { Filter } from '../../entity/filter';
 import { Playlist } from '../../entity/playlist';
 import { Response } from '../../entity/response';
@@ -118,7 +114,7 @@ export default defineComponent({
     },
     methods: {
         loadImage: (n: string, e: string) => loadImage(n, e, useRoute()),
-        loadEntity(a: string, i: ObjectId | undefined = undefined) {
+        loadEntity(a: string, i: any | undefined = undefined) {
             this.$router.push(`/song/${this.playlist._id}/${i ? i : '-1'}`)
         },
         findPlaylist(_id: any) {
@@ -133,13 +129,13 @@ export default defineComponent({
                     .finally(this.loader.hide);
             }
         },
-        findSongs(_id: ObjectId) {
+        findSongs(_id: any) {
             if (_id === undefined) {
                 this.entities = [];
             } else {
                 this.playlistService.listSong(_id)
                     .then(result => {
-                        this.entities = result;
+                        this.entities = result.map((e:Song) => Song.clone(e));
                     })
                     .catch(err => Swal.fire(swal(err)).then(r => this.cancelEntity()));
             }
@@ -151,7 +147,7 @@ export default defineComponent({
             if (this.playlist._id === undefined) {
                 this.playlistService.insert(this.playlist)
                     .then(message => {
-                        this.playlist._id = new ObjectId(message.body.insertedId);
+                        this.playlist._id = message.body.insertedId;
                         Swal.fire(swal(message));
                     })
                     .catch(err => Swal.fire(swal(err)));
@@ -172,19 +168,19 @@ export default defineComponent({
             let swalAux = swal(new Response<any>(0, "¿Está seguro que desea eliminar la lista de reproducción?"));
             Swal.fire(swalAux).then((result) => {
                 if (result.isConfirmed) {
-                    this.playlistService.delete(this.playlist._id as ObjectId)
+                    this.playlistService.delete(this.playlist._id)
                         .then(message => Swal.fire(swal(message)))
                         .catch(err => Swal.fire(swal(err)))
                         .finally(this.cancelEntity);
                 }
             });
         },
-        deleteSong(_id?: ObjectId) {
+        deleteSong(_id?: any) {
             let swalAux = swal(new Response<any>(0, "¿Está seguro que desea eliminar la canción?"));
             Swal.fire(swalAux).then((result) => {
                 if (result.isConfirmed) {
-                    let playList_Id = this.playlist._id as ObjectId;
-                    this.songService.delete(_id as ObjectId)
+                    let playList_Id = this.playlist._id;
+                    this.songService.delete(_id)
                         .then(message => Swal.fire(swal(message)))
                         .catch(err => Swal.fire(swal(err)))
                         .finally(() => this.findSongs(playList_Id));

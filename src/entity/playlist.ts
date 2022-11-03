@@ -1,4 +1,3 @@
-import { ObjectId } from "mongodb";
 import { Entity } from "./entity";
 
 export class Playlist extends Entity {
@@ -6,7 +5,7 @@ export class Playlist extends Entity {
   date?: Date;
 
   constructor(
-    _id?: ObjectId,
+    _id?: any,
     name?: string,
     date?: Date,
     image: string = 'default.png'

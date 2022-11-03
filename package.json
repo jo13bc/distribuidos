@@ -7,7 +7,6 @@
         "preview": "vite preview --port 5050"
     },
     "dependencies": {
-        "@cloudgeek/vue3-video-player": "^0.3.10",
         "@fortawesome/fontawesome-svg-core": "^6.2.0",
         "@fortawesome/free-regular-svg-icons": "^6.2.0",
         "@fortawesome/free-solid-svg-icons": "^6.2.0",

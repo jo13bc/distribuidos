@@ -12,9 +12,9 @@ const client = new MongoClient(
     `${process.env.MONGODB_URI.replace('"', '')}`, { useNewUrlParser: true, useUnifiedTopology: true }
 );
 
-async function db(callback, param = undefined) {
+async function db(callback, nameColle_ = nameColle) {
     const conexion = await client.connect();
-    const result = await callback(conexion.db(nameDB).collection(nameColle), param);
+    const result = await callback(conexion.db(nameDB).collection(nameColle_));
     await client.close();
     return result;
 }
@@ -105,6 +105,20 @@ app.get('/byPlaylist/:_id', (req, res) => {
     ).then(entities => {
         if (entities) res.status(200).json(success(entities));
         else res.status(404).json(error('Las canciones no existen'));
+    }).catch(err => {
+        res.status(404).json(error(`${err}`));
+    });
+});
+app.get('/file/:_id', (req, res) => {
+    let _id = req.params._id
+    if (!_id) {
+        res.status(404).json(error('Identificador inválido'));
+        return;
+    }
+    db(conexion => conexion.findOne({ _id: new ObjectId(_id) }), 'file')
+    .then(file => {
+        if (file) res.status(200).json(success(file));
+        else res.status(404).json(error('El archivo no existen'));
     }).catch(err => {
         res.status(404).json(error(`${err}`));
     });

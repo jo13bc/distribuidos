@@ -1,9 +1,7 @@
-import { ObjectId } from "mongodb";
-
 export class Select {
   text?: string;
-  value?: ObjectId;
-  constructor(text: string | undefined, value: ObjectId | undefined) {
+  value?: any;
+  constructor(text: string | undefined, value: any | undefined) {
     this.text = text;
     this.value = value;
   }
