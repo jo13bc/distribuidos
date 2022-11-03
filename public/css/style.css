@@ -1,9 +1,0 @@
-.vld-background {
-    background: rgba(0, 0, 0, 0.7) !important;
-    opacity: 1 !important;
-    backdrop-filter: unset !important;
-}
-
-.vld-icon, svg {
-    stroke: azure;
-}
