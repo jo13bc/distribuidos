@@ -1,8 +1,7 @@
-export class Entity {
+export abstract class Entity {
   _id?: any;
-  image: string;
-  constructor(_id: any | undefined, image: string) {
+  constructor(_id: any | undefined) {
     this._id = _id;
-    this.image = image;
   }
+  abstract toJSON(): string;  
 }

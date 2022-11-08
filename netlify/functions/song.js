@@ -3,6 +3,7 @@ const { MongoClient, ObjectId } = require('mongodb');
 const express = require('express');
 const serverless = require('serverless-http');
 const bodyParser = require('body-parser');
+const fs = require('fs');
 const exp = express();
 
 const app = express.Router();
@@ -15,7 +16,7 @@ const client = new MongoClient(
 async function db(callback, nameColle_ = nameColle) {
     const conexion = await client.connect();
     const result = await callback(conexion.db(nameDB).collection(nameColle_));
-    await client.close();
+    //await client.close();
     return result;
 }
 
@@ -56,11 +57,20 @@ app.get('/:_id', (req, res) => {
     });
 });
 app.post('/', (req, res) => {
-    req.body.playlist = new ObjectId(req.body.playlist);
-    db(conexion =>
-        conexion.insertOne(req.body)
-    ).then(study => {
-        res.status(200).json(success(study, 'La canción fue insertada exitosamente'));
+    let file = { src: undefined, song: undefined };
+    try {
+        file.src = fs.readFileSync(req.body.urlFile);
+    } catch (err) {
+        res.status(404).json(error(`${err}`));
+        return;
+    }
+    db(conexion => {
+        let result = conexion.insertOne(req.body);
+        return result;
+    }).then(song => {
+        file.song = new ObjectId(result.insertedId);
+        db(conexion2 => conexion2.insertOne(file), 'file');
+        res.status(200).json(success(song, 'La canción fue insertada exitosamente'));
     }).catch(err => {
         res.status(404).json(error(`${err}`));
     });
@@ -71,12 +81,22 @@ app.put('/:_id', (req, res) => {
         res.status(404).json(error('Identificador inválido'));
         return;
     }
+    let file = { src: undefined, song: undefined };
+    try {
+        file.src = fs.readFileSync(req.body.urlFile);
+    } catch (err) {
+        res.status(404).json(error(`${err}`));
+        return;
+    }
     req.body._id = new ObjectId(_id);
     req.body.playlist = new ObjectId(req.body.playlist);
-    db(conexion =>
-        conexion.updateOne({ _id: new ObjectId(_id) }, { $set: req.body })
-    ).then(study => {
-        res.status(200).json(success(study, 'La canción fue actualizada exitosamente'));
+    db(conexion => {
+        let result = conexion.updateOne({ _id: new ObjectId(_id) }, { $set: req.body });
+        return result;
+    }).then(song => {
+        file.song = new ObjectId(_id);
+        db(conexion2 => conexion2.updateOne({ song: new ObjectId(_id) }, { $set: file }), 'file');
+        res.status(200).json(success(song, 'La canción fue actualizada exitosamente'));
     }).catch(err => {
         res.status(404).json(error(`${err}`));
     });
@@ -87,9 +107,11 @@ app.delete('/:_id', (req, res) => {
         res.status(404).json(error('Identificador inválido'));
         return;
     }
-    db(conexion =>
-        conexion.deleteOne({ _id: new ObjectId(_id) })
-    ).then(study => {
+    db(conexion => {
+        let result = conexion.deleteOne({ _id: new ObjectId(_id) });
+        return result;
+    }).then(study => {
+        db(conexion2 => conexion2.deleteOne({ song: new ObjectId(_id) }), 'file');
         res.status(200).json(success(study, 'La canción fue eliminada exitosamente'));
     }).catch(err => {
         res.status(404).json(error(`${err}`));
@@ -115,13 +137,15 @@ app.get('/file/:_id', (req, res) => {
         res.status(404).json(error('Identificador inválido'));
         return;
     }
-    db(conexion => conexion.findOne({ _id: new ObjectId(_id) }), 'file')
-    .then(file => {
-        if (file) res.status(200).json(success(file));
-        else res.status(404).json(error('El archivo no existen'));
-    }).catch(err => {
-        res.status(404).json(error(`${err}`));
-    });
+    db(conexion => conexion.findOne({ song: new ObjectId(_id) }), 'file')
+        .then(study => {
+            study._id = study.song;
+            study.song = undefined;
+            if (study) res.status(200).json(success(study));
+            else res.status(404).json(error('No existe la canción'));
+        }).catch(err => {
+            res.status(404).json(error(`${err}`));
+        });
 });
 
 exp.use(bodyParser.json());

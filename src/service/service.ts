@@ -13,7 +13,7 @@ export class Service<E extends Entity> {
       method: "POST",
       mode: "cors",
       credentials: "same-origin",
-      body: JSON.stringify(entity),
+      body: entity.toJSON(),
     }).then((response) => response.json());
   }
 
@@ -23,7 +23,7 @@ export class Service<E extends Entity> {
       method: "PUT",
       mode: "cors",
       credentials: "same-origin",
-      body: JSON.stringify(entity),
+      body: entity.toJSON(),
     }).then((response) => response.json());
   }
 

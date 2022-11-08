@@ -34,9 +34,10 @@ export function swal(response: Response<any>): any {
   };
 }
 
-export function loadImage(name: string, entity: string, route: any) {
+export function loadImage(name: string | undefined, entity: string, route: any) {
+  let name_ = name ? name : 'default.png';
   let root = route.fullPath.split("/")[0];
-  return `${root}/image/${entity}/${name}`;
+  return `${root}/image/${entity}/${name_}`;
 }
 
 export function loadEntity(

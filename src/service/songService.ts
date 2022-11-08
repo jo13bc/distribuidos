@@ -1,14 +1,30 @@
-import { File } from "src/entity/file";
-import { Song } from "src/entity/song";
+import { File } from "../entity/file";
+import { Song } from "../entity/song";
+import { RabbitService } from "./rabbitService";
 import { Service } from "./service";
 
 export class SongService extends Service<Song> {
+  rabbitService: RabbitService;
+
   constructor() {
     super("song");
+    this.rabbitService = new RabbitService();
   }
 
-  async findFile(_id: any): Promise<any> {
-    return new Promise<any>((resolve, reject) => {
+  async insert(entity: Song): Promise<any> {
+    return await this.rabbitService.insert(entity);
+  }
+
+  async update(entity: Song): Promise<any> {
+    return await this.rabbitService.update(entity);
+  }
+
+  async delete(_id: any): Promise<any> {
+    return await this.rabbitService.delete(_id);;
+  }
+
+  async findFile(_id: any): Promise<File> {
+    return new Promise<File>((resolve, reject) => {
       fetch(`/.netlify/functions/song/file/${_id}`, {
         headers: { "Content-Type": "application/json" },
         method: "GET",

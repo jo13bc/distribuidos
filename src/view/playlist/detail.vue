@@ -6,31 +6,25 @@
                     <b-card-img v-bind="tableImage" v-bind:src="loadImage(playlist.image, 'playlist')"
                         class="rounded-0">
                     </b-card-img>
-                    <b-card-body v-if="!edit && playlist._id" style="background-color: rgba(255, 255, 255, 0.3)">
+                    <b-card-body style="background-color: rgba(255, 255, 255, 0.3)">
                         <div class="d-flex justify-content-between">
-                            <b-card-title>{{ playlist.name }}</b-card-title>
+                            <b-card-title>
+                                <b-form-input id="name" v-model="playlist.name" trim v-if="edit || !playlist._id" />
+                                <label @click="editPlaylist()" v-if="!edit && playlist._id">{{ playlist.name }}</label>
+                            </b-card-title>
                             <div class="d-flex justify-content-end">
-                                <b-button variant="link" @click="editPlaylist()">
-                                    <fa-icon icon="fa-solid fa-pen" size="xl" />
-                                </b-button>
-                                <b-button variant="link" @click="deletePlaylist()" v-if="playlist._id">
+                                <b-button variant="link" @click="deletePlaylist()" v-if="!edit && playlist._id">
                                     <fa-icon icon="fa-solid fa-trash" size="xl" />
+                                </b-button>
+                                <b-button variant="link" @click="save()" v-if="edit || !playlist._id">
+                                    <fa-icon icon="fa-solid fa-floppy-disk" size="xl" />
+                                </b-button>
+                                <b-button variant="link" @click="cancel()" v-if="edit || !playlist._id">
+                                    <fa-icon icon="fa-solid fa-ban" size="xl" />
                                 </b-button>
                             </div>
                         </div>
-                        <Player v-bind:songs="entities" ref="player" />
-                        <b-card-text>
-                            {{ playlist.date }}
-                        </b-card-text>
-                    </b-card-body>
-                    <b-card-body v-else style="background-color: rgba(255, 255, 255, 0.3)">
-                        <b-form-group description="Nombre de la lista de reproducción" label="Nombre:" label-for="name">
-                            <b-form-input id="name" v-model="playlist.name" trim />
-                        </b-form-group>
-                        <div class="d-flex justify-content-center">
-                            <b-button variant="secondary" @click="cancel()">Cancelar</b-button>
-                            <b-button variant="primary" @click="save()" class="mx-1">Guardar</b-button>
-                        </div>
+                        <Player v-bind:files="getFiles()" ref="player" />
                     </b-card-body>
                 </b-card>
                 <router-link to="/playlist">
@@ -74,7 +68,9 @@ import { useLoading } from 'vue3-loading-overlay';
 import Player from '../../component/Player.vue';
 import { PlaylistService } from '../../service/playlistService';
 import { SongService } from '../../service/songService';
+import { RabbitService } from '../../service/rabbitService';
 import { Song } from '../../entity/song';
+import { File } from '../../entity/file';
 import Swal from 'sweetalert2'
 import { swal, ACTION, detailImage, tableImage, loadImage, loadEntity } from '../../entity/utils';
 import { Filter } from '../../entity/filter';
@@ -92,7 +88,7 @@ export default defineComponent({
     },
     setup() {
         const player = ref<InstanceType<typeof Player> | null>(null).value;
-        return { loader: useLoading(), player };
+        return { loader: useLoading(), player, rabbitService: new RabbitService() };
     },
     data() {
         return {
@@ -135,7 +131,7 @@ export default defineComponent({
             } else {
                 this.playlistService.listSong(_id)
                     .then(result => {
-                        this.entities = result.map((e:Song) => Song.clone(e));
+                        this.entities = result.map((e: Song) => Song.clone(e));
                     })
                     .catch(err => Swal.fire(swal(err)).then(r => this.cancelEntity()));
             }
@@ -187,6 +183,9 @@ export default defineComponent({
                 }
             });
         },
+        getFiles(){
+            return this.entities ? this.entities.map(s => new File(s._id)) : [];
+        }
     }
 });
 </script>

@@ -33,91 +33,101 @@
 </template>
   
 <script lang="ts">
-import { defineComponent, Ref, ref, watchEffect } from 'vue';
+import { defineComponent, Ref, ref } from 'vue';
 import { SongService } from '../service/songService';
-import { Song } from '../entity/song';
+import { Response } from '../entity/response';
 import { File } from "../entity/file";
 import Swal from 'sweetalert2';
 import { swal } from '../entity/utils';
-import { Response } from '../entity/response';
 
 export default defineComponent({
-    props: ['songs', 'autoplay'],
+    props: ['files', 'autoplay'],
     expose: ['play', 'stop', 'backward', 'forward'],
     setup() {
         let curr: Ref<number | undefined> = ref(0);
         let max: Ref<number | undefined> = ref(0);
-        return { curr, max };
+        return { curr, max, filesPlayed: new Array<File>(), songService: new SongService() };
     },
     data() {
-        let song: Song | undefined;
-        return { isPlay: false, isLoading: false, volume: 50, loop: true, song, songService: new SongService() };
+        let file: File | undefined;
+        return { isPlay: false, isLoading: false, volume: 100, loop: true, file };
     },
     unmounted() {
-        if (this.song && this.song.file) {
-            this.song.file.pause();
-            this.song.file.currentTime = 0;
+        if (this.file) {
+            this.file.pause();
+            this.file.currentTime = 0;
             this.isPlay = false;
         }
-        this.song = undefined;
+        this.file = undefined;
     },
     methods: {
         isEmpty() {
-            return this.songs.length == 0;
+            return this.files ? this.files.length == 0 : true;
         },
-        play(_id?: any) {
+        async play(_id?: any) {
             this.isLoading = true;
-            let newSong: Song;
-            if (this.song && this.song.file && !_id) {
-                this.song.file.play();
+            let newFile: File | undefined;
+            if (this.file && !_id) {
+                this.file.play();
                 this.isPlay = true;
                 this.isLoading = false;
             } else {
                 this.pause();
                 if (_id) {
-                    newSong = this.songs?.find((s: Song) => s._id == _id);
+                    newFile = this.files?.find((s: File) => s._id == _id);
                 } else {
-                    newSong = this.songs[0];
+                    newFile = this.files[0];
                 }
-                this.songService.findFile(newSong.file?._id).then(file => {
-                    if (file.file) {
-                        newSong.file = new File(file._id, file.file);
-                        this.song = newSong;
-                        if (this.song?.file) {
-                            this.song.file.volume = this.volume * 0.01;
-                            this.song.file.play();
-                            this.song.file.ontimeupdate = this.ontimeupdate;
-                            this.song.file.onended = this.onended;
+                if (newFile) {
+                    try {
+                        if (!this.file?.src) {
+                            newFile = await this.songService.findFile(newFile._id);
+                            if (!newFile.src) {
+                                throw "El archivo recuperado de la base de datos está dañado";
+                            }
                         }
-                        this.isPlay = true;
-                        this.isLoading = false;
-                    } else {
-                        Swal.fire(swal(new Response<any>(404, "El archivo está dañado")))
+                        if (newFile.src) {
+                            this.file = File.Clone(newFile);
+                            this.file.volume = this.volume * 0.01;
+                            this.file.play();
+                            this.file.ontimeupdate = this.ontimeupdate;
+                            this.file.onended = this.onended;
+                            this.isPlay = true;
+                            this.isLoading = false;
+                        } else {
+                            throw "El archivo cargado está dañado";
+                        }
+                    } catch (error) {
+                        Swal.fire(swal(new Response<any>(404, error as string)));
                     }
-                });
+                }
             }
         },
         pause() {
-            if (this.song && this.song.file) {
-                this.song.file.pause();
+            if (this.file) {
+                this.file.pause();
                 this.isPlay = false;
             }
         },
         stop() {
-            if (this.song && this.song.file) {
-                this.song.file.pause();
-                this.song.file.currentTime = 0;
+            if (this.file) {
+                this.file.pause();
+                this.file.currentTime = 0;
                 this.isPlay = false;
             }
-            this.song = undefined;
+            this.file = undefined;
         },
         backward() {
-            let song = this.songs[0];
-            this.play(song._id);
+            this.stop();
+            let file = this.filesPlayed.pop() as File;
+            this.files.unshift(file);
+            this.play();
         },
         forward() {
-            let song = this.songs.pop();
-            this.play(song._id);
+            this.stop();
+            let file = this.files.shift() as File;
+            this.filesPlayed.push(file);
+            this.play();
         },
         formatter(number: number): string {
             return number.toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false });
@@ -130,18 +140,17 @@ export default defineComponent({
             return `${this.formatter(min)}:${this.formatter(second)}:${this.formatter(mili)}`;
         },
         ontimeupdate() {
-            this.max = this.song?.file?.duration;
-            this.curr = this.song?.file?.currentTime;
+            this.max = this?.file?.duration;
+            this.curr = this?.file?.currentTime;
         },
         onended() {
-            this.songs.pop();
+            this.files.pop();
             this.play();
         },
         muted() {
             this.volume = this.volume == 0 ? 50 : 0;
-            if (this.song && this.song.file) {
-                this.song.file.volume = this.volume * 0.01;
-                this.isPlay = false;
+            if (this.file) {
+                this.file.volume = this.volume * 0.01;
             }
         },
         repeat() {

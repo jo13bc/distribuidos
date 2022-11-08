@@ -7,7 +7,8 @@ export class Song extends Entity {
   author?: string;
   album?: string;
   url?: string;
-  file?: File;
+  urlFile?: string;
+  image: string;
 
   constructor(
     _id?: any,
@@ -16,19 +17,33 @@ export class Song extends Entity {
     author?: string,
     album?: string,
     url?: string,
-    file?: File | string,
+    urlFile?: string,
     image: string = 'default.png'
   ) {
-    super(_id, image);
+    super(_id);
     this.playlist = playlist;
     this.name = name;
     this.author = author;
     this.album = album;
     this.url = url;
-    this.file = typeof file == 'string' ? new File(file) : file;
+    this.urlFile = urlFile;
+    this.image = image;
   }
 
   static clone(s: Song): Song {
-    return new Song(s._id, s.playlist, s.name, s.author, s.album, s.url, s.file, s.image);
+    return new Song(s._id, s.playlist, s.name, s.author, s.album, s.url, s.image);
+  }
+
+  toJSON(): string {
+    return JSON.stringify({
+      _id: this._id,
+      playlist: this.playlist,
+      name: this.name,
+      author: this.author,
+      album: this.album,
+      url: this.url,
+      urlFile: this.urlFile,
+      image: this.image
+    });
   }
 }

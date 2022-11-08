@@ -23,14 +23,14 @@
             <b-form-group label="-">
               <b-card-img v-bind="detailImage" v-bind:src="loadImage(entity.image)" class="rounded-0 mb-1" />
             </b-form-group>
-            <b-form-group label-for="image">
-              <input class="form-control" type="file" id="image" />
+            <!--<b-form-group label-for="image">
+              <input class="form-control" type="file" @change="setFile" />
             </b-form-group>
-            <!--<b-form-file v-model="entity.image" :state="Boolean(entity.image)" placeholder="Seleccione la imagen"
+            <b-form-file v-model="entity.image" :state="Boolean(entity.image)" placeholder="Seleccione la imagen"
               drop-placeholder="Imagen"></b-form-file>-->
             <b-form-input id="image" v-model="entity.image" trim hidden />
             <b-form-group label-for="file">
-              <Player v-bind:songs="[entity]" ref="player" />
+              <Player v-bind:files="getFile()" ref="player" />
             </b-form-group>
           </b-card-body>
         </b-col>
@@ -43,6 +43,9 @@
             </b-col>
             <b-col class="text-left">
               <b-button variant="primary" @click="saveEntity">Guardar</b-button>
+            </b-col>
+            <b-col>
+              <b-button variant="success" @click="subir()">Subir</b-button>
             </b-col>
           </b-row>
         </b-container>
@@ -64,8 +67,10 @@ import { useLoading } from 'vue3-loading-overlay';
 import Player from '../../component/Player.vue';
 import { SongService } from '../../service/songService';
 import { Song } from '../../entity/song';
+import { File } from '../../entity/file';
 import Swal from 'sweetalert2'
 import { swal, detailImage, loadImage } from '../../entity/utils';
+import { RabbitService } from '../../service/rabbitService';
 
 export default defineComponent({
   components: {
@@ -73,19 +78,19 @@ export default defineComponent({
   },
   setup() {
     const player = ref<InstanceType<typeof Player> | null>(null).value;
-    return { loader: useLoading(), player };
+    return { loader: useLoading(), player, rabbitService: new RabbitService() };
   },
   data() {
     return {
       detailImage,
       entity: new Song(),
       songService: new SongService(),
-      edit: true
+      edit: true,
+      rabbitService: new RabbitService()
     };
   },
   created() {
     const params: any = useRoute().params;
-    console.log(JSON.stringify(params));
     this.findSong(params.playlist, params._id);
   },
   methods: {
@@ -108,16 +113,46 @@ export default defineComponent({
       this.$router.push(`/playlist/${this.entity.playlist}`);
     },
     saveEntity(): void {
-      if (this.entity._id === undefined) {
+      this.loader.show();
+      if (this.entity._id == undefined) {
         this.songService.insert(this.entity)
-          .then(message => Swal.fire(swal(message)).then(r => this.cancelEntity()))
-          .catch(err => Swal.fire(swal(err)));
+          .then(message => Swal.fire(swal(message)).then(this.cancelEntity))
+          .catch(err => Swal.fire(swal(err)))
+          .finally(this.loader.hide);
       } else {
         this.songService.update(this.entity)
-          .then(message => Swal.fire(swal(message)).then(r => this.cancelEntity()))
-          .catch(err => Swal.fire(swal(err)));
+          .then(message => Swal.fire(swal(message)).then(this.cancelEntity))
+          .catch(err => Swal.fire(swal(err)))
+          .finally(this.loader.hide);
       }
     },
+    /*
+    setFile(event: any) {
+      let reader = new FileReader();
+      reader.readAsDataURL(event.target.files[0]);
+      reader.onloadstart = () => {
+        this.loader.show();
+      }
+      reader.onload = () => {
+        this.file = new File(this.entity?._id, reader.result as string);
+        console.log(reader.result);
+      };
+      reader.onerror = function (err) {
+        Swal.fire(swal(new Response<any>(400, JSON.stringify(err))));
+      };
+      reader.onloadend = () => {
+        this.loader.hide();
+        //Swal.fire(swal(new Response<any>(200, 'Archivo cargado con éxito')));
+      }
+    },*/
+    getFile() {
+      return [new File(this.entity._id)];
+    },
+    subir() {
+      this.rabbitService.runtask()
+        .then(message => Swal.fire(swal(message))/*.then(this.cancelEntity)*/)
+        .catch(err => Swal.fire(swal(err)));
+    }
   }
 });
 </script>
