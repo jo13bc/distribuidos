@@ -19,7 +19,7 @@ async function ch(callback) {
     const conexion = await amqp.connect(cloudamqp);
     const channel = await conexion.createChannel();
     const result = await callback(channel);
-    channel.close();
+    //channel.close();
     return result;
 }
 

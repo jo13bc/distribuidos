@@ -15,7 +15,7 @@ const client = new MongoClient(
 async function db(callback) {
     const conexion = await client.connect();
     const result = await callback(conexion.db(nameDB).collection(nameColle));
-    await client.close();
+    //await client.close();
     return result;
 }
 
