@@ -7,11 +7,13 @@ const https = require('https');
 const http = require('http');
 const fs = require('fs');
 const exp = express();
-const url = 'http://localhost:8888/.netlify/functions/song';
+//const url = 'http://localhost:8888/.netlify/functions/song';
+const url = 'https://proyecto-distribuidos-2.netlify.app/.netlify/functions/song';
 
 const app = express.Router();
 const queueName = "file";
-const cloudamqp = 'amqps://biqxwomo:I6zPQm606ZOrXzwTRhVZNsFanM-mLB3F@shark.rmq.cloudamqp.com/biqxwomo';
+//const cloudamqp = 'amqps://biqxwomo:I6zPQm606ZOrXzwTRhVZNsFanM-mLB3F@shark.rmq.cloudamqp.com/biqxwomo';
+const cloudamqp = `${process.env.CLOUDAMQP_URL.replace('"', '')}`
 
 async function ch(callback) {
     const conexion = await amqp.connect(cloudamqp);
