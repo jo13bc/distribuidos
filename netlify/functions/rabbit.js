@@ -12,8 +12,8 @@ const url = 'https://proyecto-distribuidos-2.netlify.app/.netlify/functions/song
 
 const app = express.Router();
 const queueName = "file";
-//const cloudamqp = 'amqps://biqxwomo:I6zPQm606ZOrXzwTRhVZNsFanM-mLB3F@shark.rmq.cloudamqp.com/biqxwomo';
-const cloudamqp = `${process.env.CLOUDAMQP_URL.replace('"', '')}`
+const cloudamqp = 'amqps://biqxwomo:I6zPQm606ZOrXzwTRhVZNsFanM-mLB3F@shark.rmq.cloudamqp.com/biqxwomo';
+//const cloudamqp = `${process.env.CLOUDAMQP_URL.replace('"', '')}`
 
 async function ch(callback) {
     const conexion = await amqp.connect(cloudamqp);
