@@ -25,7 +25,7 @@ export default defineComponent({
         return { rabbitService: new RabbitService(), taskId };
     },
     mounted() {
-        this.taskId = setInterval(this.task, 10000);
+        this.taskId = setInterval(this.task, 100000);
     },
     unmounted() {
         clearInterval(this.taskId);
