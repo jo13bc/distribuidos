@@ -57,11 +57,11 @@ export default defineComponent({
       this.$router.push(`/playlist/${i ? i : '-1'}`)
     },
     allEntities(): void {
-      this.loader.show();
+      //this.loader.show();
       this.service.list()
         .then(result => this.entities = result)
         .catch(err => Swal.fire(swal(err)))
-        .finally(() => this.loader.hide());
+        //.finally(() => this.loader.hide());
     },
     deleteEntity(_id: any): void {
       let swalAux = swal(new Response<any>(0, "¿Está seguro que desea eliminar la lista de reproducción?"));

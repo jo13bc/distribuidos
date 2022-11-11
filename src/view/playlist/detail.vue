@@ -117,12 +117,12 @@ export default defineComponent({
             if (_id == undefined || _id == -1) {
                 this.playlist = new Playlist();
             } else {
-                this.loader.show();
+                //this.loader.show();
                 this.findSongs(_id);
                 this.playlistService.find(_id)
                     .then(result => this.playlist = result)
                     .catch(err => Swal.fire(swal(err)).then(r => this.cancelEntity()))
-                    .finally(this.loader.hide);
+                    //.finally(this.loader.hide);
             }
         },
         findSongs(_id: any) {

@@ -100,11 +100,11 @@ export default defineComponent({
         this.entity = new Song();
         this.entity.playlist = playlist;
       } else {
-        this.loader.show();
+        //this.loader.show();
         this.songService.find(_id)
           .then(result => {
             this.entity = Song.clone(result);
-            this.loader.hide();
+            //this.loader.hide();
           })
           .catch(err => Swal.fire(swal(err)).then(r => this.cancelEntity()));
       }
@@ -113,17 +113,17 @@ export default defineComponent({
       this.$router.push(`/playlist/${this.entity.playlist}`);
     },
     saveEntity(): void {
-      this.loader.show();
+      //this.loader.show();
       if (this.entity._id == undefined) {
         this.songService.insert(this.entity)
           .then(message => Swal.fire(swal(message)).then(this.cancelEntity))
           .catch(err => Swal.fire(swal(err)))
-          .finally(this.loader.hide);
+          //.finally(this.loader.hide);
       } else {
         this.songService.update(this.entity)
           .then(message => Swal.fire(swal(message)).then(this.cancelEntity))
           .catch(err => Swal.fire(swal(err)))
-          .finally(this.loader.hide);
+          //.finally(this.loader.hide);
       }
     },
     /*
