@@ -61,7 +61,7 @@ export default defineComponent({
       this.service.list()
         .then(result => this.entities = result)
         .catch(err => Swal.fire(swal(err)))
-        .finally(this.loader.hide);
+        .finally(() => this.loader.hide());
     },
     deleteEntity(_id: any): void {
       let swalAux = swal(new Response<any>(0, "¿Está seguro que desea eliminar la lista de reproducción?"));
@@ -70,7 +70,7 @@ export default defineComponent({
           this.service.delete(_id)
             .then(message => Swal.fire(swal(message)))
             .catch(err => Swal.fire(swal(err)))
-            .finally(this.allEntities);
+            .finally(() => this.allEntities());
         }
       });
     }
