@@ -24,6 +24,12 @@ async function db(callback, param = undefined) {
   await client.close();
   return result;
 }
+async function dbWithBefore(before, callback) {
+  const conexion = await client.connect();
+  const resultBefore = await before(conexion.db(nameDB));
+  await client.close();
+  return db(callback, resultBefore);
+}
 
 function response(status, message, body) {
   return { status, message, body };
@@ -110,7 +116,7 @@ app.delete("/:_id", (req, res) => {
     });
 });
 function sing(user) {
-  let data = { user_id: user._id, email: data.username };
+  let data = { user_id: user._id, email: user.username };
   let expire = { expiresIn: "2h" };
   return { user, token: jwt.sign(data, process.env.TOKEN_KEY, expire) };
 }
@@ -122,7 +128,7 @@ app.post("/login", async (req, res) => {
   db(conexion => conexion.findOne({ username: req.body.username }))
     .then(async user => {
       if (!await bcrypt.compare(req.body.password, user.password)) {
-        throw "Contraseña incorrecta, 1: " + user.password + ", 2: " + req.body.password;
+        throw "Contraseña incorrecta";
       }
       res.status(200).json(success(sing(user), "El usuario fue validado"));
     })
