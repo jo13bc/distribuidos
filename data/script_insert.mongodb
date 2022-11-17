@@ -1,5 +1,3 @@
-const bcrypt = require("bcryptjs");
-
 use('store');
 
 async function inserts(){
@@ -167,11 +165,10 @@ async function inserts(){
             "image": "Up.jpeg"
         }
     ]);
-    let password = await bcrypt.hash('12345', 10);
     db.user.drop();
     db.user.insertMany([{
             "username": "admin",
-            "password": password
+            "password": "$2a$10$8uTlfXJw4bmkrqp98mmdFOqksQudGbgLJHasCGofbcaJlSOiuM4k6"
         }
     ]);
 }

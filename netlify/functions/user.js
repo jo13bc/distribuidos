@@ -119,7 +119,9 @@ function sing(user) {
   let expire = { expiresIn: "2h" };
   return { data, token: jwt.sign(user, process.env.TOKEN_KEY, expire) };
 }
-app.get("/login", (req, res) => {
+app.get("/login", async (req, res) => {
+  let test = await bcrypt.hash('12345', 10);
+  console.log('password: ', test);
   let username = req.params.username,
     password = req.params.password;
   if (!username || !password) {

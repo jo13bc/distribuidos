@@ -1,9 +1,5 @@
 <template>
     <b-card :title="title">
-      <b-form-group label-for="image">
-        <b-img center rounded="circle" v-bind="detailImage" v-bind:src="loadImage(entity.image, ENTITY.user.name)" />
-        <b-form-input id="image" v-model="entity.image" trim hidden />
-      </b-form-group>
       <b-form-group description="Ingresa tu usuario" label="Usuario:" label-for="username">
         <b-form-input id="username" v-model="entity.username" trim />
       </b-form-group>
@@ -13,7 +9,7 @@
       <template #footer>
         <b-container fluid>
           <b-row>
-            <b-col class="text-left">
+            <b-col class="text-center">
               <b-button variant="primary" @click="login">Guardar</b-button>
             </b-col>
           </b-row>
