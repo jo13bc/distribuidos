@@ -45,8 +45,7 @@ export default defineComponent({
     methods: {
         loggout() {
             sessionStorage.removeItem('user');
-            this.$router.push('/');
-            location.reload();
+            window.location.href = '/';
         }
     }
 });

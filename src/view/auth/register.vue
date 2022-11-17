@@ -1,5 +1,5 @@
 <template>
-  <b-card :title="title">
+  <b-card :header="title" header-tag="h4" header-class="text-center" style="min-width: 25rem;">
     <b-form-group description="Ingresa tu usuario" label="Usuario:" label-for="username">
       <b-form-input id="username" v-model="entity.username" trim />
     </b-form-group>
