@@ -27,7 +27,7 @@ async function db(callback, param = undefined) {
 async function dbWithBefore(before, callback) {
   const conexion = await client.connect();
   const resultBefore = await before(conexion.db(nameDB));
-  await client.close();
+  //await client.close();
   client = new MongoClient(`${process.env.MONGODB_URI.replace('"', "")}`, {
     useNewUrlParser: true,
     useUnifiedTopology: true
