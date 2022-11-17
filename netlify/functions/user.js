@@ -77,10 +77,10 @@ app.post("/", async (req, res) => {
         .find({ username: req.body.username })
         .toArray(),
     (conexion, users) => {
-      if (users === []) {
-        conexion.insertOne(req.body);
-      } else {
+      if (users && users.length > 0) {
         throw "Ya existe un usuario con este nombre de usuario";
+      } else {
+        conexion.insertOne(req.body);
       }
     }
   )
