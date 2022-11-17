@@ -16,22 +16,34 @@ let client = new MongoClient(`${process.env.MONGODB_URI.replace('"', "")}`, {
 });
 
 async function db(callback, param = undefined) {
-  const conexion = await client.connect();
-  const result = await callback(
-    conexion.db(nameDB).collection(nameColle),
-    param
-  );
-  if (!param) {
-    await client.close();
-  }
-  return result;
+  return new Promise(async (resolve, reject) => {
+    try {
+      const conexion = await client.connect();
+      const result = await callback(
+        conexion.db(nameDB).collection(nameColle),
+        param
+      );
+      if (!param) {
+        await client.close();
+      }
+      resolve(result);
+    } catch (err) {
+      reject(err);
+    }
+  });
 }
 async function dbWithBefore(before, callback) {
-  const conexion = await client.connect();
-  const resultBefore = await before(conexion.db(nameDB));
-  const resultAfter = db(callback, resultBefore);
-  await client.close();
-  return resultAfter;
+  return new Promise(async (resolve, reject) => {
+    try {
+      const conexion = await client.connect();
+      const resultBefore = await before(conexion.db(nameDB));
+      const resultAfter = await db(callback, resultBefore);
+      await client.close();
+      resolve(resultAfter);
+    } catch (err) {
+      reject(err);
+    }
+  });
 }
 
 function response(status, message, body) {
@@ -72,32 +84,28 @@ app.get("/:_id", (req, res) => {
 });
 app.post("/", async (req, res) => {
   req.body.password = await bcrypt.hash(req.body.password, 10);
-  try {
-    dbWithBefore(
-      conexion =>
-        conexion
-          .collection(nameColle)
-          .find({ username: req.body.username })
-          .toArray(),
-      (conexion, users) => {
-        if (users && users.length > 0) {
-          throw "Ya existe un usuario con este nombre de usuario";
-        } else {
-          conexion.insertOne(req.body);
-        }
+  dbWithBefore(
+    conexion =>
+      conexion
+        .collection(nameColle)
+        .find({ username: req.body.username })
+        .toArray(),
+    (conexion, users) => {
+      if (users && users.length > 0) {
+        throw "Ya existe un usuario con este nombre de usuario";
+      } else {
+        return conexion.insertOne(req.body);
       }
-    )
-      .then(user => {
-        res
-          .status(200)
-          .json(success(user, "El usuario fue insertado exitosamente"));
-      })
-      .catch(err => {
-        res.status(404).json(error(`${err}`));
-      });
-  } catch (err) {
-    res.status(404).json(error(`${err}`));
-  }
+    }
+  )
+    .then(user => {
+      res
+        .status(200)
+        .json(success(user, "El usuario fue insertado exitosamente"));
+    })
+    .catch(err => {
+      res.status(404).json(error(`${err}`));
+    });
 });
 app.put("/:_id", (req, res) => {
   let _id = req.params._id;
