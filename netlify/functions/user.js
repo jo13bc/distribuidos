@@ -34,6 +34,7 @@ function success(body, message = undefined) {
 }
 
 function error(message) {
+  console.error(message);
   return response(404, message, undefined);
 }
 
@@ -110,10 +111,7 @@ app.delete("/:_id", (req, res) => {
 function sing(user) {
   let data = { user_id: user._id, email: data.username };
   let expire = { expiresIn: "2h" };
-  return {
-    data,
-    token: jwt.sign(JSON.stringify(user), process.env.TOKEN_KEY, expire)
-  };
+  return { data, token: jwt.sign(user, process.env.TOKEN_KEY, expire) };
 }
 app.post("/login", async (req, res) => {
   if (!req.body.username || !req.body.password) {

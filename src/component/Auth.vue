@@ -10,7 +10,7 @@
         <b-container fluid>
           <b-row>
             <b-col class="text-center">
-              <b-button variant="primary" @click="login">Guardar</b-button>
+              <b-button variant="primary" @click="login">Ingresar</b-button>
             </b-col>
           </b-row>
         </b-container>
