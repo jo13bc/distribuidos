@@ -13,11 +13,11 @@ import { ENTITY } from "./src/entity/utils";
 const routes = [
   {
     path: "/", name: "Login", component: Login,
-    meta: { title: ENTITY.login.title },
+    props: { title: ENTITY.login.title },
   },
   {
     path: "/register", name: "Register", component: Register,
-    meta: { title: ENTITY.register.title },
+    props: { title: ENTITY.register.title },
   },
   { path: "/home", name: "Home", component: Home },
   {

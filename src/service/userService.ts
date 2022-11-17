@@ -7,7 +7,7 @@ export class UserService extends Service<User> {
     super("user");
   }
 
-  async login(user: User): Promise<User> {
+  login(user: User): Promise<User> {
     return new Promise<User>((resolve, reject) => {
       fetch(
         `/.netlify/functions/user/login`, {

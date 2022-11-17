@@ -10,10 +10,10 @@
       <b-container fluid>
         <b-row>
           <b-col class="text-center">
-            <b-button variant="primary" @click="cancelEntity">Cancelar</b-button>
+            <b-button variant="primary" @click="cancelEntity()">Cancelar</b-button>
           </b-col>
           <b-col class="text-center">
-            <b-button variant="primary" @click="save">Guardar</b-button>
+            <b-button variant="primary" @click="save()">Guardar</b-button>
           </b-col>
         </b-row>
       </b-container>
@@ -24,7 +24,6 @@
 import { defineComponent } from 'vue';
 import { UserService } from '../../service/userService';
 import { User } from '../../entity/user';
-import { useRoute } from 'vue-router';
 import Swal from 'sweetalert2';
 import { ENTITY, swal } from '../../entity/utils';
 
@@ -45,7 +44,8 @@ export default defineComponent({
       this.userService.insert(this.entity)
         .then(result => {
           this.entity = result;
-        }).catch(err => Swal.fire(swal(err)).then(this.cancelEntity));
+          this.cancelEntity();
+        }).catch(err => Swal.fire(swal(err)));
     },
   }
 });
