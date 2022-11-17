@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 import { Entity } from "../entity/entity";
-import { Response } from "src/entity/response";
+import { Response } from "../entity/response";
 
 export class Service<E extends Entity> {
   entity_name: string;
