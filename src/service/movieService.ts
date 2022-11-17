@@ -1,8 +1,7 @@
-import { Director } from "src/entity/director";
-import { Movie } from "src/entity/movie";
-import { Study } from "src/entity/study";
+import { Movie } from "../entity/movie";
+import { Study } from "../entity/study";
 import { Service } from "./service";
-import { Response } from "src/entity/response";
+import { Response } from "../entity/response";
 import { ObjectId } from "mongodb";
 
 export class MovieService extends Service<Movie> {

@@ -1,6 +1,6 @@
-import { User } from "src/entity/user";
+import { User } from "../entity/user";
 import { Service } from "./service";
-import { Response } from "src/entity/response";
+import { Response } from "../entity/response";
 
 export class UserService extends Service<User> {
   constructor() {
