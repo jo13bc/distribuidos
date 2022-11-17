@@ -21,18 +21,17 @@ async function db(callback, param = undefined) {
     conexion.db(nameDB).collection(nameColle),
     param
   );
-  await client.close();
+  if (!param) {
+    await client.close();
+  }
   return result;
 }
 async function dbWithBefore(before, callback) {
   const conexion = await client.connect();
   const resultBefore = await before(conexion.db(nameDB));
-  //await client.close();
-  client = new MongoClient(`${process.env.MONGODB_URI.replace('"', "")}`, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  });
-  return db(callback, resultBefore);
+  const resultAfter = db(callback, resultBefore)
+  await client.close();
+  return resultAfter;
 }
 
 function response(status, message, body) {
