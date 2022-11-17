@@ -25,13 +25,6 @@ async function db(callback, param = undefined) {
   return result;
 }
 
-async function dbWithBefore(before, callback) {
-  const conexion = await client.connect();
-  const resultBefore = await before(conexion.db(nameDB));
-  await client.close();
-  return db(callback, resultBefore);
-}
-
 function response(status, message, body) {
   return { status, message, body };
 }
@@ -117,20 +110,19 @@ app.delete("/:_id", (req, res) => {
 function sing(user) {
   let data = { user_id: user._id, email: data.username };
   let expire = { expiresIn: "2h" };
-  return { data, token: jwt.sign(user, process.env.TOKEN_KEY, expire) };
+  return {
+    data,
+    token: jwt.sign(JSON.stringify(user), process.env.TOKEN_KEY, expire)
+  };
 }
-app.get("/login", async (req, res) => {
-  let test = await bcrypt.hash('12345', 10);
-  console.log('password: ', test);
-  let username = req.params.username,
-    password = req.params.password;
-  if (!username || !password) {
+app.post("/login", async (req, res) => {
+  if (!req.body.username || !req.body.password) {
     res.status(404).json(error("El usuario y contraseña son requeridos"));
     return;
   }
-  db(conexion => conexion.findOne({ username }))
+  db(conexion => conexion.findOne({ username: req.body.username }))
     .then(async user => {
-      if (!await bcrypt.compare(user.password, password)) {
+      if (!await bcrypt.compare(user.password, req.body.password)) {
         throw "Contraseña incorrecta";
       }
       res.status(200).json(success(sing(user), "El usuario fue validado"));
