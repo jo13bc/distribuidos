@@ -166,11 +166,11 @@ async function inserts(){
         }
     ]);
     db.user.drop();
-    /*db.user.insertMany([{
+    db.user.insertMany([{
             "username": "admin",
             "password": "$2a$10$8uTlfXJw4bmkrqp98mmdFOqksQudGbgLJHasCGofbcaJlSOiuM4k6"
         }
-    ]);*/
+    ]);
 }
 
 inserts();
