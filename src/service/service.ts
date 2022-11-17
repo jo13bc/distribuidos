@@ -19,7 +19,7 @@ export class Service<E extends Entity> {
       }).then((response) => response.json())
         .then((response: Response<any | undefined>) => {
           if (response.status == 200) {
-            resolve(response.body);
+            resolve(response);
           } else {
             if (!response.status) {
               throw (response as any).errorMessage;
@@ -43,7 +43,7 @@ export class Service<E extends Entity> {
       }).then((response) => response.json())
         .then((response: Response<any | undefined>) => {
           if (response.status == 200) {
-            resolve(response.body);
+            resolve(response);
           } else {
             if (!response.status) {
               throw (response as any).errorMessage;
@@ -66,7 +66,7 @@ export class Service<E extends Entity> {
       }).then((response) => response.json())
         .then((response: Response<any | undefined>) => {
           if (response.status == 200) {
-            resolve(response.body);
+            resolve(response);
           } else {
             if (!response.status) {
               throw (response as any).errorMessage;
