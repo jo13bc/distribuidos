@@ -29,7 +29,7 @@ async function db(callback, param = undefined) {
 async function dbWithBefore(before, callback) {
   const conexion = await client.connect();
   const resultBefore = await before(conexion.db(nameDB));
-  const resultAfter = db(callback, resultBefore)
+  const resultAfter = db(callback, resultBefore);
   await client.close();
   return resultAfter;
 }
@@ -72,28 +72,32 @@ app.get("/:_id", (req, res) => {
 });
 app.post("/", async (req, res) => {
   req.body.password = await bcrypt.hash(req.body.password, 10);
-  dbWithBefore(
-    conexion =>
-      conexion
-        .collection(nameColle)
-        .find({ username: req.body.username })
-        .toArray(),
-    (conexion, users) => {
-      if (users && users.length > 0) {
-        throw "Ya existe un usuario con este nombre de usuario";
-      } else {
-        conexion.insertOne(req.body);
+  try {
+    dbWithBefore(
+      conexion =>
+        conexion
+          .collection(nameColle)
+          .find({ username: req.body.username })
+          .toArray(),
+      (conexion, users) => {
+        if (users && users.length > 0) {
+          throw "Ya existe un usuario con este nombre de usuario";
+        } else {
+          conexion.insertOne(req.body);
+        }
       }
-    }
-  )
-    .then(user => {
-      res
-        .status(200)
-        .json(success(user, "El usuario fue insertado exitosamente"));
-    })
-    .catch(err => {
-      res.status(404).json(error(`${err}`));
-    });
+    )
+      .then(user => {
+        res
+          .status(200)
+          .json(success(user, "El usuario fue insertado exitosamente"));
+      })
+      .catch(err => {
+        res.status(404).json(error(`${err}`));
+      });
+  } catch (err) {
+    res.status(404).json(error(`${err}`));
+  }
 });
 app.put("/:_id", (req, res) => {
   let _id = req.params._id;
