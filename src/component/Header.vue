@@ -1,29 +1,33 @@
 <template>
     <header>
         <b-navbar toggleable="lg" type="dark" variant="light">
-            <b-navbar-brand href="/home">Inicio</b-navbar-brand>
+            <b-navbar-brand>
+                <router-link class="btn btn-link" to="/">
+                    Inicio
+                </router-link>
+            </b-navbar-brand>
             <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
             <b-collapse id="nav-collapse" is-nav>
                 <b-navbar-nav>
                     <b-nav-item>
-                        <router-link class="button button-primary" to="/movie">
+                        <router-link class="btn btn-link" to="/movie">
                             Películas
                         </router-link>
                     </b-nav-item>
                     <b-nav-item>
-                        <router-link class="button button-primary" to="/director">
+                        <router-link class="btn btn-link" to="/director">
                             Directores
                         </router-link>
                     </b-nav-item>
                     <b-nav-item>
-                        <router-link class="button button-primary" to="/study">
+                        <router-link class="btn btn-link" to="/study">
                             Estudios
                         </router-link>
                     </b-nav-item>
                     <b-nav-item>
-                        <router-link class="button button-primary" @click="loggout()">
+                        <b-button variant="link" @click="loggout()">
                             Cerrar sesión
-                        </router-link>
+                        </b-button>
                     </b-nav-item>
                 </b-navbar-nav>
             </b-collapse>
@@ -41,6 +45,8 @@ export default defineComponent({
     methods: {
         loggout() {
             sessionStorage.removeItem('user');
+            this.$router.push('/');
+            location.reload();
         }
     }
 });

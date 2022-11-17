@@ -33,6 +33,9 @@ import { ENTITY, swal } from '../../entity/utils';
 export default defineComponent({
   props: ['title'],
   data() {
+    if (!!sessionStorage.getItem('user')) {
+      this.goHome();
+    }
     return {
       entity: new User(),
       userService: new UserService(),
@@ -41,7 +44,8 @@ export default defineComponent({
   },
   methods: {
     goHome() {
-      this.$router.push('/home');
+      this.$router.push('/');
+      location.reload();
     },
     verify() {
       this.userService.login(this.entity)

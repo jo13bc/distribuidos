@@ -12,14 +12,13 @@ import { ENTITY } from "./src/entity/utils";
 
 const routes = [
   {
-    path: "/", name: "Login", component: Login,
+    path: "/", name: "Login", component: !!sessionStorage.getItem('user') ? Home : Login,
     props: { title: ENTITY.login.title },
   },
   {
     path: "/register", name: "Register", component: Register,
     props: { title: ENTITY.register.title },
   },
-  { path: "/home", name: "Home", component: Home },
   {
     path: "/movie",
     name: "Movie",
