@@ -121,7 +121,7 @@ app.post("/login", async (req, res) => {
   }
   db(conexion => conexion.findOne({ username: req.body.username }))
     .then(async user => {
-      if (!await bcrypt.compare(user.password, req.body.password)) {
+      if (!await bcrypt.compare(req.body.password, user.password)) {
         throw "Contraseña incorrecta, 1: " + user.password + ", 2: " + req.body.password;
       }
       res.status(200).json(success(sing(user), "El usuario fue validado"));
