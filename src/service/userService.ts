@@ -10,11 +10,12 @@ export class UserService extends Service<User> {
   async login(user: User): Promise<User> {
     return new Promise<User>((resolve, reject) => {
       fetch(
-        `/.netlify/functions/user/login/?username=${user.username}&password=${user.password}`, {
+        `/.netlify/functions/user/login`, {
         headers: { "Content-Type": "application/json" },
-        method: "GET",
+        method: "POST",
         mode: "cors",
         credentials: "same-origin",
+        body: JSON.stringify(user)
       }).then((response) => response.json())
         .then((response: Response<User>) => {
           if (response.status === 200) {
