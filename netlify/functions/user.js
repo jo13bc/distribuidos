@@ -70,7 +70,20 @@ app.get("/:_id", (req, res) => {
 });
 app.post("/", async (req, res) => {
   req.body.password = await bcrypt.hash(req.body.password, 10);
-  db(conexion => conexion.insertOne(req.body))
+  dbWithBefore(
+    conexion =>
+      conexion
+        .collection(nameColle)
+        .find({ username: req.body.username })
+        .toArray(),
+    (conexion, users) => {
+      if (users === []) {
+        conexion.insertOne(req.body);
+      } else {
+        throw "Ya existe un usuario con este nombre de usuario";
+      }
+    }
+  )
     .then(user => {
       res
         .status(200)
