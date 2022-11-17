@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
+import Login from "./src/view/auth/login.vue";
+import Register from "./src/view/auth/register.vue";
 import Home from "./src/view/Home.vue";
 import MovieIndex from "./src/view/movie/index.vue";
 import MovieDetail from "./src/view/movie/detail.vue";
@@ -9,7 +11,15 @@ import DirectorDetail from "./src/view/director/detail.vue";
 import { ENTITY } from "./src/entity/utils";
 
 const routes = [
-  { path: "/", name: "Home", component: Home },
+  {
+    path: "/", name: "Login", component: Login,
+    meta: { title: ENTITY.login.title },
+  },
+  {
+    path: "/register", name: "Register", component: Register,
+    meta: { title: ENTITY.register.title },
+  },
+  { path: "/home", name: "Home", component: Home },
   {
     path: "/movie",
     name: "Movie",

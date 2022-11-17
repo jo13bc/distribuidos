@@ -30,9 +30,16 @@ export const ENTITY = {
     update: `${ACTION.update} Director`,
     detail: `${ACTION.detail} Director`,
   },
-  user: {
+  login: {
     name: "user",
     title: "Login",
+    insert: `${ACTION.insert} Usuario`,
+    update: `${ACTION.update} Usuario`,
+    detail: `${ACTION.detail} Usuario`,
+  },
+  register: {
+    name: "user",
+    title: "Registro",
     insert: `${ACTION.insert} Usuario`,
     update: `${ACTION.update} Usuario`,
     detail: `${ACTION.detail} Usuario`,

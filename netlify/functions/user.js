@@ -62,7 +62,8 @@ app.get("/:_id", (req, res) => {
       res.status(404).json(error(`${err}`));
     });
 });
-app.post("/", (req, res) => {
+app.post("/", async (req, res) => {
+  req.body.password = await bcrypt.hash(req.body.password, 10);
   db(conexion => conexion.insertOne(req.body))
     .then(user => {
       res
@@ -111,7 +112,7 @@ app.delete("/:_id", (req, res) => {
 function sing(user) {
   let data = { user_id: user._id, email: data.username };
   let expire = { expiresIn: "2h" };
-  return { data, token: jwt.sign(user, process.env.TOKEN_KEY, expire) };
+  return { user, token: jwt.sign(data, process.env.TOKEN_KEY, expire) };
 }
 app.post("/login", async (req, res) => {
   if (!req.body.username || !req.body.password) {
