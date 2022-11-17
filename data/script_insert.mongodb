@@ -1,3 +1,5 @@
+const bcrypt = require("bcryptjs");
+
 use('store');
 
 async function inserts(){
@@ -163,6 +165,13 @@ async function inserts(){
             "directorId": directorIds[5-1],
             "studies": [studyIds[2-1], studyIds[4-1]],
             "image": "Up.jpeg"
+        }
+    ]);
+    let password = await bcrypt.hash('12345', 10);
+    db.user.drop();
+    db.user.insertMany([{
+            "username": "admin",
+            "password": password
         }
     ]);
 }

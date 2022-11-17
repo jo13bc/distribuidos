@@ -30,6 +30,13 @@ export const ENTITY = {
     update: `${ACTION.update} Director`,
     detail: `${ACTION.detail} Director`,
   },
+  user: {
+    name: "user",
+    title: "Login",
+    insert: `${ACTION.insert} Usuario`,
+    update: `${ACTION.update} Usuario`,
+    detail: `${ACTION.detail} Usuario`,
+  },
 };
 
 const SWALTYPE = {
