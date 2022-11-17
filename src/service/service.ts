@@ -24,7 +24,7 @@ export class Service<E extends Entity> {
             reject(response);
           }
         }).catch(error => {
-          reject(new Response<any>(404, error.message ? error.message : error.errorMessage, error));
+          reject(new Response<any>(404, JSON.stringify(error), error));
         });
     });
   }
