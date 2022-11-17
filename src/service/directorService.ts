@@ -19,7 +19,7 @@ export class DirectorService extends Service<Director> {
         credentials: "same-origin",
       }).then((response) => response.json())
         .then((response: Response<Array<Movie> | undefined>) => {
-          if (response.status === 200) {
+          if (response.status == 200) {
             resolve(response.body);
           } else {
             if (!response.status) {

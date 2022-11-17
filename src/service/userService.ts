@@ -18,7 +18,7 @@ export class UserService extends Service<User> {
         body: JSON.stringify(user)
       }).then((response) => response.json())
         .then((response: Response<User>) => {
-          if (response.status === 200) {
+          if (response.status == 200) {
             resolve(response.body as User);
           } else {
             if (!response.status) {

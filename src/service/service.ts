@@ -18,7 +18,7 @@ export class Service<E extends Entity> {
         body: JSON.stringify(entity),
       }).then((response) => response.json())
         .then((response: Response<any | undefined>) => {
-          if (response.status === 200) {
+          if (response.status == 200) {
             resolve(response.body);
           } else {
             if (!response.status) {
@@ -42,7 +42,7 @@ export class Service<E extends Entity> {
         body: JSON.stringify(entity),
       }).then((response) => response.json())
         .then((response: Response<any | undefined>) => {
-          if (response.status === 200) {
+          if (response.status == 200) {
             resolve(response.body);
           } else {
             if (!response.status) {
@@ -65,7 +65,7 @@ export class Service<E extends Entity> {
         credentials: "same-origin",
       }).then((response) => response.json())
         .then((response: Response<any | undefined>) => {
-          if (response.status === 200) {
+          if (response.status == 200) {
             resolve(response.body);
           } else {
             if (!response.status) {
@@ -88,7 +88,7 @@ export class Service<E extends Entity> {
         credentials: "same-origin",
       }).then((response) => response.json())
         .then((response: Response<E | undefined>) => {
-          if (response.status === 200) {
+          if (response.status == 200) {
             resolve(response.body);
           } else {
             if (!response.status) {
@@ -111,7 +111,7 @@ export class Service<E extends Entity> {
         credentials: "same-origin",
       }).then((response) => response.json())
         .then((response: Response<Array<E> | undefined>) => {
-          if (response.status === 200) {
+          if (response.status == 200) {
             resolve(response.body);
           } else {
             if (!response.status) {
