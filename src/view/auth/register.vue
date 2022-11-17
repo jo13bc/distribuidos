@@ -43,8 +43,7 @@ export default defineComponent({
     save() {
       this.userService.insert(this.entity)
         .then(result => {
-          this.entity = result;
-          this.cancelEntity();
+          Swal.fire(swal(result)).then(this.cancelEntity);
         }).catch(err => Swal.fire(swal(err)));
     },
   }
