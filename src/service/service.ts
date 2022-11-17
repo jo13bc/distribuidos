@@ -24,7 +24,7 @@ export class Service<E extends Entity> {
             reject(response);
           }
         }).catch(error => {
-          reject(error);
+          reject(new Response<any>(404, error.errorMessage, error));
         });
     });
   }
@@ -45,7 +45,7 @@ export class Service<E extends Entity> {
             reject(response);
           }
         }).catch(error => {
-          reject(error);
+          reject(new Response<any>(404, error.errorMessage, error));
         });
     });
   }
@@ -65,7 +65,7 @@ export class Service<E extends Entity> {
             reject(response);
           }
         }).catch(error => {
-          reject(error);
+          reject(new Response<any>(404, error.errorMessage, error));
         });
     });
   }
@@ -85,7 +85,7 @@ export class Service<E extends Entity> {
             reject(response);
           }
         }).catch(error => {
-          reject(error);
+          reject(new Response<any>(404, error.errorMessage, error));
         });
     });
   }
@@ -105,7 +105,7 @@ export class Service<E extends Entity> {
             reject(response);
           }
         }).catch(error => {
-          reject(error);
+          reject(new Response<any>(404, error.errorMessage, error));
         });
     });
   }

@@ -24,7 +24,7 @@ export class UserService extends Service<User> {
             reject(response);
           }
         }).catch(error => {
-          reject(error);
+          reject(new Response<any>(404, error.errorMessage, error));
         });
     });
   }
