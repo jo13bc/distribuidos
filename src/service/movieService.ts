@@ -21,10 +21,13 @@ export class MovieService extends Service<Movie> {
           if (response.status === 200) {
             resolve(response.body);
           } else {
+            if (!response.status) {
+              throw (response as any).errorMessage;
+            }
             reject(response);
           }
         }).catch(error => {
-          reject(new Response<any>(404, error.errorMessage, error));
+          reject(new Response<any>(404, error.message, error));
         });
     });
   }

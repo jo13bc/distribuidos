@@ -43,7 +43,6 @@ function success(body, message = undefined) {
 }
 
 function error(message) {
-  console.error(message);
   return response(404, message, undefined);
 }
 
