@@ -1,5 +1,5 @@
 "use strict";
-const Redis = require("ioredis");
+const Redis = require("redis");
 const express = require("express");
 const serverless = require("serverless-http");
 const bodyParser = require("body-parser");
@@ -8,11 +8,7 @@ const exp = express();
 
 const app = express.Router();
 const schema = directorSchema;
-const client = new Redis({
-  host: "redis-11911.c14.us-east-1-2.ec2.cloud.redislabs.com",
-  port: 11911,
-  password: "E23LnJcbvD0RmP84032OR9nMZwezE6br"
-});
+const client = Redis.createClient(`${process.env.REDISDB_URI.replace('"', '')}`);
 
 async function db(callback) {
   const repository = client.fetchRepository(schema);
